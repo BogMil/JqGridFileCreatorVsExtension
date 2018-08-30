@@ -63,6 +63,7 @@
     <Compile Include="Models\ConnectionStringCredentials.cs" />
     <Compile Include="OpenJqGridCodeGeneratorMenu.cs" />
     <Compile Include="OpenJqGridCodeGeneratorMenuPackage.cs" />
+    <Compile Include="ProjectItemsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="T4Templates\TestTemplate.cs">
       <AutoGen>True</AutoGen>
@@ -85,7 +86,7 @@
   <ItemGroup>
     <Content Include="index.html" />
     <Content Include="T4Templates\TestTemplate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TestTemplate.cs</LastGenOutput>
     </Content>
     <VSCTCompile Include="OpenJqGridCodeGeneratorMenuPackage.vsct">
@@ -167,6 +168,22 @@
       <HintPath>..\packages\Microsoft.VisualStudio.TextManager.Interop.8.0.8.0.50727\lib\Microsoft.VisualStudio.TextManager.Interop.8.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.VisualStudio.TextTemplating.14.0\v4.0_14.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.TextTemplating.14.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.11.0, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.VisualStudio.TextTemplating.Interfaces.11.0\v4.0_11.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.TextTemplating.Interfaces.11.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.VSHost.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.VisualStudio.TextTemplating.VSHost.14.0\v4.0_14.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.TextTemplating.VSHost.14.0.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.Threading, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Threading.15.0.240\lib\net45\Microsoft.VisualStudio.Threading.dll</HintPath>
     </Reference>
@@ -210,6 +227,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

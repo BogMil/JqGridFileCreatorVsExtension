@@ -4,6 +4,7 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Runtime.InteropServices;
 using EnvDTE;
+using JqGridCodeGenerator.T4Templates;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -82,57 +83,12 @@ namespace JqGridCodeGenerator
         {
             Instance = new OpenJqGridCodeGeneratorMenu(package);
         }
-
+        private object ClickedItem;
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ClickedItem = sender;
             var JqGridCodeGeneratorWindow = new JqGridCodeGeneratorWindow();
-            
             JqGridCodeGeneratorWindow.ShowDialog();
-        }
-        private void CreateFiles(object sender, EventArgs e)
-        {
-            uint itemid = VSConstants.VSITEMID_NIL;
-
-            if (!IsSingleProjectItemSelection(out IVsHierarchy hierarchy, out itemid)) return;
-            // Get the file path
-            string itemFullPath = null;
-            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
-            var transformFileInfo = new FileInfo(itemFullPath);
-            var BasePath = transformFileInfo.Directory.Parent.FullName;
-
-            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
-            var activeProjects = dte.ActiveSolutionProjects as Array;
-
-            var projFullName = ((Project)activeProjects.GetValue(0)).FullName;
-
-            var file1Path = itemFullPath + "testFile.cs";
-            var myFile = File.Create(file1Path);
-            myFile.Close();
-            //testTemplate page = new testTemplate();
-            //String pageContent = page.TransformText();
-            //File.WriteAllText(file1Path, pageContent);
-            var file2Path = itemFullPath + "testFile2.cs";
-            var myFile2 = File.Create(file2Path);
-            myFile2.Close();
-
-            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
-            Project proj = null;
-            foreach (Project project in GetProjects(solution))
-            {
-                if (project.FullName == projFullName)
-                    proj = project;
-            }
-            if (proj == null)
-                throw new Exception("Nema projekta");
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                "Uspesno",
-                "Jqgrid poruka",
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
 
         private void HandleCommandVisibility(object sender, EventArgs e)
@@ -225,51 +181,6 @@ namespace JqGridCodeGenerator
                     Marshal.Release(hierarchyPtr);
                 }
             }
-        }
-
-        public static IEnumerable<EnvDTE.Project> GetProjects(IVsSolution solution)
-        {
-            foreach (IVsHierarchy hier in GetProjectsInSolution(solution))
-            {
-                EnvDTE.Project project = GetDTEProject(hier);
-                if (project != null)
-                    yield return project;
-            }
-        }
-
-        public static IEnumerable<IVsHierarchy> GetProjectsInSolution(IVsSolution solution)
-        {
-            return GetProjectsInSolution(solution, __VSENUMPROJFLAGS.EPF_LOADEDINSOLUTION);
-        }
-
-        public static IEnumerable<IVsHierarchy> GetProjectsInSolution(IVsSolution solution, __VSENUMPROJFLAGS flags)
-        {
-            if (solution == null)
-                yield break;
-
-            IEnumHierarchies enumHierarchies;
-            Guid guid = Guid.Empty;
-            solution.GetProjectEnum((uint)flags, ref guid, out enumHierarchies);
-            if (enumHierarchies == null)
-                yield break;
-
-            IVsHierarchy[] hierarchy = new IVsHierarchy[1];
-            uint fetched;
-            while (enumHierarchies.Next(1, hierarchy, out fetched) == VSConstants.S_OK && fetched == 1)
-            {
-                if (hierarchy.Length > 0 && hierarchy[0] != null)
-                    yield return hierarchy[0];
-            }
-        }
-
-        public static EnvDTE.Project GetDTEProject(IVsHierarchy hierarchy)
-        {
-            if (hierarchy == null)
-                throw new ArgumentNullException("hierarchy");
-
-            object obj;
-            hierarchy.GetProperty(VSConstants.VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_ExtObject, out obj);
-            return obj as EnvDTE.Project;
         }
     }
 }

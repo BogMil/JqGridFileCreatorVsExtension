@@ -7,7 +7,7 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ViewModel="clr-namespace:JqGridCodeGenerator.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="300" >
+             d:DesignHeight="400" Height="400">
     <Page.Resources>
         <ViewModel:ChooseDataBaseViewModel x:Key="vm"/>
     </Page.Resources>
@@ -38,11 +38,30 @@
                   SelectedValuePath="Name"
                   SelectedValue="{Binding DatabaseEntry, Source={StaticResource vm}, Mode=TwoWay}" />
 
-            <ComboBox ItemsSource="{Binding Tables, Source={StaticResource vm},Mode=OneWay}"
+            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Tables, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
                   SelectedValue="{Binding Table, Source={StaticResource vm}, Mode=TwoWay}" />
 
+            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Controllers, Source={StaticResource vm},Mode=OneWay}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Name"
+                  SelectedValue="{Binding Controller, Source={StaticResource vm}, Mode=TwoWay}" />
+
+            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Services, Source={StaticResource vm},Mode=OneWay}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Name"
+                  SelectedValue="{Binding Service, Source={StaticResource vm}, Mode=TwoWay}" />
+
+            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Repositories, Source={StaticResource vm},Mode=OneWay}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Name"
+                  SelectedValue="{Binding Repository, Source={StaticResource vm}, Mode=TwoWay}" />
+
+            <Button Margin="0 10 0 0" Command="{Binding CreateFilesCommand, Source={StaticResource vm}}" Name="CreateFiles">
+                Create files
+            </Button>
+            
         </StackPanel>
     </Grid>
 </Page>

@@ -17,7 +17,7 @@ using JqGridCodeGenerator.T4Templates;
 
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
-
+using System.Windows;
 
 namespace JqGridCodeGenerator.ViewModel
 {
@@ -37,6 +37,8 @@ namespace JqGridCodeGenerator.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
 
+        public List<string> AddedFolders;
+
         private string _SqlServerName = "Enter Sql Server Name";
         private string _Username = "Enter username";
         private string _Password = "Enter password";
@@ -49,10 +51,17 @@ namespace JqGridCodeGenerator.ViewModel
             PopulateComboBoxWithTables = new CustomCommand(PopulateWithTables, CanExecuteCommand);
             CreateFilesCommand = new CustomCommand(CreateFiles, CanExecuteCommand);
 
+            AddedFolders = new List<string>();
             GetControllers();
             GetServices(); 
             GetRepositories();
 
+            string message = "Kreirani su sledeci folderi koji su bitni za rad GenericCSR framework-a:\n-----------------------\n";
+            foreach (var addedFolder in AddedFolders)
+                message += addedFolder+"\n-----------------------\n";
+
+            if(AddedFolders.Count>0)
+                MessageBox.Show(message,"Informacija");
         }
 
         private CollectionView _databaseEntries;
@@ -515,41 +524,23 @@ namespace JqGridCodeGenerator.ViewModel
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
-            var isInArea = rootFolder.Name == "Controllers";
+            var isInArea = rootFolder.Parent.Name == "Areas";
 
             List<ComboBoxItem> list = new List<ComboBoxItem>();
             var controllerFolder = activeProject.GetProjectItemByName("Controllers");
             foreach (ProjectItem controller in controllerFolder.ProjectItems)
             {
-                if (controller.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
-                {
-                    var x = controller.FileCodeModel;
-                    foreach(var ele in x.CodeElements)
-                    {
-                        if (ele is CodeNamespace)
-                        {
-                            var ns = ele as CodeNamespace;
-                            // run through classes
-                            foreach (var property in ns.Members)
-                            {
-                                var type = property as CodeClass;
-                                if (type == null)
-                                    continue;
-                                var z = type.Name;
-                                list.Add(new ComboBoxItem(type.Name));
-                            }
-                        }
-                    }
-                }
+                list= PopulateListWithTypesThatInheritBaseType(controller,list);
             }
 
             if (isInArea)
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
-                var areasControllerFolder = areasFolder.GetProjectItemByName("Controllers");
-                foreach(ProjectItem controller in areasControllerFolder.ProjectItems)
+                var areasRootFolder = areasFolder.GetProjectItemByName(rootFolder.Name);
+                var areasControllerFolder = areasRootFolder.GetProjectItemByName("Controllers");
+                foreach (ProjectItem controller in areasControllerFolder.ProjectItems)
                 {
-                    list.Add(new ComboBoxItem(controller.Name));
+                    list = PopulateListWithTypesThatInheritBaseType(controller, list);
                 }
             }
             Controllers = new CollectionView(list);
@@ -558,7 +549,6 @@ namespace JqGridCodeGenerator.ViewModel
         public void GetServices()
         {
             DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
-
             var activeProject = GetActiveProject(dte);
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
@@ -570,11 +560,13 @@ namespace JqGridCodeGenerator.ViewModel
             
             if (servicesFolder == null)
             {
-
                 servicesFolder=activeProject.ProjectItems.AddFolder("Services");
                 var crudFolder = servicesFolder.ProjectItems.AddFolder("CRUD");
                 crudFolder.ProjectItems.AddFolder("Interfaces");
-                servicesFolder = crudFolder;
+
+                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services");
+                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
+                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
             }
             else
             {
@@ -582,16 +574,23 @@ namespace JqGridCodeGenerator.ViewModel
                 if (crudFolder==null)
                 {
                     crudFolder=servicesFolder.ProjectItems.AddFolder("CRUD");
+                    crudFolder.ProjectItems.AddFolder("Interfaces");
+
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
                 }
                 var interfacesFolder = crudFolder.GetProjectItemByName("Interfaces");
                 if (interfacesFolder == null)
                 {
                     crudFolder.ProjectItems.AddFolder("Interfaces");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
                 }
-                foreach (ProjectItem service in crudFolder.ProjectItems)
+                else
                 {
-                    //dodati samo filove bez foldera
-                    list.Add(new ComboBoxItem(service.Name));
+                    foreach (ProjectItem service in crudFolder.ProjectItems)
+                    {
+                        list = PopulateListWithTypesThatInheritBaseType(service, list);
+                    }
                 }
             }
 
@@ -603,10 +602,38 @@ namespace JqGridCodeGenerator.ViewModel
                 if (ServicesFolderInRoot == null)
                 {
                     ServicesFolderInRoot=rootFolderInAreas.ProjectItems.AddFolder("Services");
+                    var crudFolder = ServicesFolderInRoot.ProjectItems.AddFolder("CRUD");
+                    crudFolder.ProjectItems.AddFolder("Interfaces");
+
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Services");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Services\\CRUD");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
                 }
-                foreach (ProjectItem service in ServicesFolderInRoot.ProjectItems)
+                else
                 {
-                    list.Add(new ComboBoxItem(service.Name));
+                    var crudFolder = ServicesFolderInRoot.GetProjectItemByName("CRUD");
+                    if (crudFolder == null)
+                    {
+                        crudFolder = ServicesFolderInRoot.ProjectItems.AddFolder("CRUD");
+                        crudFolder.ProjectItems.AddFolder("Interfaces");
+
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD");
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
+                    }
+                    var interfacesFolder = crudFolder.GetProjectItemByName("Interfaces");
+                    if (interfacesFolder == null)
+                    {
+                        crudFolder.ProjectItems.AddFolder("Interfaces");
+
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
+                    }
+                    else
+                    {
+                        foreach (ProjectItem service in crudFolder.ProjectItems)
+                        {
+                            list = PopulateListWithTypesThatInheritBaseType(service, list);
+                        }
+                    }
                 }
             }
             Services = new CollectionView(list);
@@ -619,7 +646,7 @@ namespace JqGridCodeGenerator.ViewModel
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
-            var isInArea = rootFolder.Name == "Areas";
+            var isInArea = rootFolder.Parent.Name == "Areas";
 
             List<ComboBoxItem> list = new List<ComboBoxItem>();
             var repositoriesFolder = activeProject.GetProjectItemByName("Repositories");
@@ -627,28 +654,81 @@ namespace JqGridCodeGenerator.ViewModel
             if (repositoriesFolder == null)
             {
                 repositoriesFolder=activeProject.ProjectItems.AddFolder("Repositories");
+                repositoriesFolder.ProjectItems.AddFolder("Interfaces");
+                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories");
+                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
             }
-
-            foreach (ProjectItem controller in repositoriesFolder.ProjectItems)
+            else
             {
-                list.Add(new ComboBoxItem(controller.Name));
+                var interfacesFolder = repositoriesFolder.GetProjectItemByName("Interfaces");
+                if (interfacesFolder == null)
+                {
+                    repositoriesFolder.ProjectItems.AddFolder("Interfaces");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
+                }
             }
 
             if (isInArea)
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var rootFolderInAreas = areasFolder.GetProjectItemByName(rootFolder.Name);
-                var areasRepositoriesFolder = rootFolderInAreas.GetProjectItemByName("Repositories");
-                if (areasRepositoriesFolder == null)
+                var RepositoriesFolderInRoot = rootFolderInAreas.GetProjectItemByName("Repositories");
+                if (RepositoriesFolderInRoot == null)
                 {
-                    areasRepositoriesFolder.ProjectItems.AddFolder("Repositories");
+                    RepositoriesFolderInRoot= rootFolderInAreas.ProjectItems.AddFolder("Repositories");
+                    RepositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
+
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Repositories");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name +"\\"+ rootFolder.Parent.Name + "\\" + rootFolder.Name+"\\Repositories\\Interfaces");
                 }
-                foreach (ProjectItem repository in areasRepositoriesFolder.ProjectItems)
+                else
                 {
-                    list.Add(new ComboBoxItem(repository.Name));
+                    var interfacesFolder = RepositoriesFolderInRoot.GetProjectItemByName("Interfaces");
+                    if (interfacesFolder == null)
+                    {
+                        RepositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Repositories\\Interfaces");
+                    }
                 }
             }
-            Repositories = new CollectionView(list);
+        }
+
+
+        public List<ComboBoxItem> PopulateListWithTypesThatInheritBaseType(ProjectItem projectItem, List<ComboBoxItem> list,string baseType=null)
+        {
+            if (!(projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile))
+                return list;
+            var codeModel = projectItem.FileCodeModel;
+            foreach (var element in codeModel.CodeElements)
+            {
+                if (!(element is CodeNamespace))
+                    continue;
+                var ns = element as CodeNamespace;
+
+                foreach (var property in ns.Members)
+                {
+                    var type = property as CodeClass;
+                    if (type == null)
+                        continue;
+                    if(baseType != null)
+                    {
+                        foreach (var baseClass in (type as CodeType).Bases)
+                        {
+                            var bClass = baseClass as CodeClass;
+                            if (bClass == null)
+                                continue;
+                            if (bClass.Name == baseType)
+                                list.Add(new ComboBoxItem(type.Name));
+                        }
+                    }
+                    else
+                    {
+                        list.Add(new ComboBoxItem(type.Name));
+                    }
+                }
+
+            }
+            return list;
         }
 
         public DirectoryInfo GetRootFolder()

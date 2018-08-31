@@ -28,9 +28,9 @@
             </CheckBox>
             <StackPanel Margin="10 10 10 10" x:Name="CredentialsForm" >
                 <Label>Username</Label>
-                <TextBox Text="{Binding Password, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
-                <Label>Password</Label>
                 <TextBox Text="{Binding Username, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
+                <Label>Password</Label>
+                <TextBox Text="{Binding Password, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
             </StackPanel>
             <Button Command="{Binding PopulateComboBoxWithDatabasesCommand, Source={StaticResource vm}}" CommandParameter="{Binding }" Margin="10 10 10 10">Prikazi Baze</Button>
             <ComboBox ItemsSource="{Binding DatabaseEntries, Source={StaticResource vm},Mode=OneWay}"
@@ -52,11 +52,6 @@
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
                   SelectedValue="{Binding Service, Source={StaticResource vm}, Mode=TwoWay}" />
-
-            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Repositories, Source={StaticResource vm},Mode=OneWay}"
-                  DisplayMemberPath="Name"
-                  SelectedValuePath="Name"
-                  SelectedValue="{Binding Repository, Source={StaticResource vm}, Mode=TwoWay}" />
 
             <Button Margin="0 10 0 0" Command="{Binding CreateFilesCommand, Source={StaticResource vm}}" Name="CreateFiles">
                 Create files

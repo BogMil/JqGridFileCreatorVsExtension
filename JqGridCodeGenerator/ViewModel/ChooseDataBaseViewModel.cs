@@ -18,6 +18,7 @@ using JqGridCodeGenerator.T4Templates;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 using System.Windows;
+using Microsoft.VisualStudio.TextTemplating;
 
 namespace JqGridCodeGenerator.ViewModel
 {
@@ -30,7 +31,11 @@ namespace JqGridCodeGenerator.ViewModel
         public ICommand PopulateComboBoxWithTables { get; set; }
         public ICommand CreateFilesCommand { get; set; }
 
-        public List<Column> Columns;
+        public List<Column> Columns = new List<Column>() {
+            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column1" },
+            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column2" },
+            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column3" }
+        };
 
         private void onPropertyChanged(string property)
         {
@@ -54,7 +59,7 @@ namespace JqGridCodeGenerator.ViewModel
             AddedFolders = new List<string>();
             GetControllers();
             GetServices(); 
-            GetRepositories();
+            CreateRepositoriesFoldersIfNeeded();
 
             string message = "Kreirani su sledeci folderi koji su bitni za rad GenericCSR framework-a:\n-----------------------\n";
             foreach (var addedFolder in AddedFolders)
@@ -225,6 +230,19 @@ namespace JqGridCodeGenerator.ViewModel
             }
         }
 
+        private string _baseName="BaseName";
+        public string BaseName
+        {
+            get { return _baseName; }
+            set
+            {
+                if (value != _baseName)
+                {
+                    _baseName = value;
+                    onPropertyChanged("BaseName");
+                }
+            }
+        }
         public bool UseWindowsIdentity
         {
             get { return _UseWindowsIdentity; }
@@ -376,9 +394,12 @@ namespace JqGridCodeGenerator.ViewModel
             var myFile = File.Create(file1Path);
             myFile.Close();
             TestTemplate page = new TestTemplate();
-            page.Session = new Microsoft.VisualStudio.TextTemplating.TextTemplatingSession();
-            page.Session["name"] = "testDaLiRadi";
-            page.Session["controllerNamespace"] = "controllerNamespaceTebra";
+            page.Session = new TextTemplatingSession
+            {
+                ["name"] = "testDaLiRadi",
+                ["controllerNamespace"] = "controllerNamespaceTebra",
+                ["columns"] = Columns
+            };
             page.Initialize();
             String pageContent = page.TransformText();
             File.WriteAllText(file1Path, pageContent);
@@ -392,7 +413,62 @@ namespace JqGridCodeGenerator.ViewModel
             ItemOperations ItemOp = dte.ItemOperations;
             ItemOp.OpenFile(file1Path, EnvDTE.Constants.vsViewKindTextView);
 
+            CreateIServiceFile(activeProject,rootFolder);
+            CreateServiceFile(activeProject, rootFolder);
+
             JqGridCodeGeneratorWindow.Instance.Close();
+        }
+
+        private void CreateIServiceFile(Project activeProject,DirectoryInfo rootFolder)
+        {
+            var filePath = rootFolder.FullName + "\\Services\\CRUD\\Interfaces\\I"+BaseName+"Service.cs";
+            var file = File.Create(filePath);
+            file.Close();
+            IServiceTemplate page = new IServiceTemplate();
+            page.Session = new TextTemplatingSession
+            {
+                ["baseName"] = BaseName,
+                ["baseNamespace"] = GetBaseNamespace(rootFolder)
+            };
+            page.Initialize();
+
+            var pageContent = page.TransformText();
+            File.WriteAllText(filePath, pageContent);
+
+            activeProject.ProjectItems.AddFromFile(filePath);
+
+            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
+            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+        }
+
+        private void CreateServiceFile(Project activeProject, DirectoryInfo rootFolder)
+        {
+            var filePath = rootFolder.FullName + "\\Services\\CRUD\\" + BaseName + "Service.cs";
+            var file = File.Create(filePath);
+            file.Close();
+            ServiceTemplate page = new ServiceTemplate();
+            page.Session = new TextTemplatingSession
+            {
+                ["baseName"] = BaseName,
+                ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                ["useCustomBaseService"]=false
+            };
+            page.Initialize();
+
+            var pageContent = page.TransformText();
+            File.WriteAllText(filePath, pageContent);
+
+            activeProject.ProjectItems.AddFromFile(filePath);
+
+            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
+            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+        }
+
+        private string GetBaseNamespace(DirectoryInfo rootFolder)
+        {
+            if (IsRootFolderInArea(rootFolder))
+                return rootFolder.Parent.Parent.Name + "." + rootFolder.Parent.Name + "." + rootFolder.Name;
+            return rootFolder.Name;
         }
 
         private static Project GetCurrentProjectFromSolution(string projFullName, IVsSolution solution)
@@ -524,7 +600,6 @@ namespace JqGridCodeGenerator.ViewModel
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
-            var isInArea = rootFolder.Parent.Name == "Areas";
 
             List<ComboBoxItem> list = new List<ComboBoxItem>();
             var controllerFolder = activeProject.GetProjectItemByName("Controllers");
@@ -533,7 +608,7 @@ namespace JqGridCodeGenerator.ViewModel
                 list= PopulateListWithTypesThatInheritBaseType(controller,list);
             }
 
-            if (isInArea)
+            if (IsRootFolderInArea(rootFolder))
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var areasRootFolder = areasFolder.GetProjectItemByName(rootFolder.Name);
@@ -553,7 +628,6 @@ namespace JqGridCodeGenerator.ViewModel
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
-            var isInArea = rootFolder.Parent.Name == "Areas";
 
             List<ComboBoxItem> list = new List<ComboBoxItem>();
             var servicesFolder = activeProject.GetProjectItemByName("Services");
@@ -594,7 +668,7 @@ namespace JqGridCodeGenerator.ViewModel
                 }
             }
 
-            if (isInArea)
+            if (IsRootFolderInArea(rootFolder))
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var rootFolderInAreas = areasFolder.GetProjectItemByName(rootFolder.Name);
@@ -639,14 +713,13 @@ namespace JqGridCodeGenerator.ViewModel
             Services = new CollectionView(list);
         }
 
-        public void GetRepositories()
+        public void CreateRepositoriesFoldersIfNeeded()
         {
             DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
             var activeProject = GetActiveProject(dte);
             IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
-            var isInArea = rootFolder.Parent.Name == "Areas";
 
             List<ComboBoxItem> list = new List<ComboBoxItem>();
             var repositoriesFolder = activeProject.GetProjectItemByName("Repositories");
@@ -668,7 +741,7 @@ namespace JqGridCodeGenerator.ViewModel
                 }
             }
 
-            if (isInArea)
+            if (IsRootFolderInArea(rootFolder))
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var rootFolderInAreas = areasFolder.GetProjectItemByName(rootFolder.Name);
@@ -707,15 +780,13 @@ namespace JqGridCodeGenerator.ViewModel
 
                 foreach (var property in ns.Members)
                 {
-                    var type = property as CodeClass;
-                    if (type == null)
+                    if (!(property is CodeClass type))
                         continue;
-                    if(baseType != null)
+                    if (baseType != null)
                     {
                         foreach (var baseClass in (type as CodeType).Bases)
                         {
-                            var bClass = baseClass as CodeClass;
-                            if (bClass == null)
+                            if (!(baseClass is CodeClass bClass))
                                 continue;
                             if (bClass.Name == baseType)
                                 list.Add(new ComboBoxItem(type.Name));
@@ -742,8 +813,11 @@ namespace JqGridCodeGenerator.ViewModel
             return new DirectoryInfo(clickedFolderFullPath).Parent; ;
         }
 
+        private bool IsRootFolderInArea(DirectoryInfo rootFolder)
+        {
+            return rootFolder.Parent.Name == "Areas";
+        }
     }
-
 
     public class ComboBoxItem
     {

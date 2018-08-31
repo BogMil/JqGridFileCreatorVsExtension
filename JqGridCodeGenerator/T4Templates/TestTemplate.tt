@@ -5,11 +5,21 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ parameter type="System.String" name="name" #>
 <#@ parameter type="System.String" name="controllerNamespace" #>
+<#@ parameter type="System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>" name="columns" #>
+
+using AutoMapper;
 
 namespace <#=controllerNamespace#> 
 {
 	public class <#=name#>Controller : 
 	{
-
+		<#
+			foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
+			{
+		#>
+		<#= column.Name #>
+		<#
+			}
+		#>
 	}
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Runtime.InteropServices;
-using EnvDTE;
-using JqGridCodeGenerator.T4Templates;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;

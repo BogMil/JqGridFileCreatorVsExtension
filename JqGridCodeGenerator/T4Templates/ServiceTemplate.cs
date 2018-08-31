@@ -18,9 +18,9 @@ namespace JqGridCodeGenerator.T4Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
+    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public partial class TestTemplate : TestTemplateBase
+    public partial class ServiceTemplate : ServiceTemplateBase
     {
 #line hidden
         /// <summary>
@@ -28,88 +28,139 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\nusing AutoMapper;\r\n\r\nnamespace ");
+            this.Write("using Automapper;\r\n");
             
-            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(controllerNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(" \r\n{\r\n\tpublic class ");
-            
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(name));
-            
-            #line default
-            #line hidden
-            this.Write("Controller : \r\n\t{\r\n\t\t");
-            
-            #line 16 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
+            #line 10 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+ 
+	if(!useCustomBaseService){
 
-			foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
-			{
-		
             
             #line default
             #line hidden
-            this.Write("\t\t");
+            this.Write("using GenericCSR.Service;\r\n");
             
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n\t\t");
-            
-            #line 21 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
+            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
 
-			}
-		
+	}else{
+
             
             #line default
             #line hidden
-            this.Write("\t}\r\n}\r\n");
+            this.Write("using Custom.Base.Service;\r\n");
+            
+            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+
+	}
+
+            
+            #line default
+            #line hidden
+            this.Write("using ");
+            
+            #line 21 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Models;\r\nusing ");
+            
+            #line 22 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Repositories.Interfaces;\r\nusing ");
+            
+            #line 23 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Services.CRUD.Interfaces;\r\n\r\nnamespace ");
+            
+            #line 25 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Service.CRUD\r\n{\r\n\tpublic class ");
+            
+            #line 27 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("Service : GenericService<");
+            
+            #line 27 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto,");
+            
+            #line 27 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("CommandDto>\r\n\t{\r\n\t\tpublic ");
+            
+            #line 29 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("Service(I");
+            
+            #line 29 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("Repository repository, IMapper mapper) : base(repository, mapper)\r\n        {\r\n\r\n " +
+                    "       }\r\n\t}\r\n}");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\TestTemplate.tt"
+        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
 
-private string _nameField;
+private string _baseNameField;
 
 /// <summary>
-/// Access the name parameter of the template.
+/// Access the baseName parameter of the template.
 /// </summary>
-private string name
+private string baseName
 {
     get
     {
-        return this._nameField;
+        return this._baseNameField;
     }
 }
 
-private string _controllerNamespaceField;
+private string _baseNamespaceField;
 
 /// <summary>
-/// Access the controllerNamespace parameter of the template.
+/// Access the baseNamespace parameter of the template.
 /// </summary>
-private string controllerNamespace
+private string baseNamespace
 {
     get
     {
-        return this._controllerNamespaceField;
+        return this._baseNamespaceField;
     }
 }
 
-private global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column> _columnsField;
+private bool _useCustomBaseServiceField;
 
 /// <summary>
-/// Access the columns parameter of the template.
+/// Access the useCustomBaseService parameter of the template.
 /// </summary>
-private global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column> columns
+private bool useCustomBaseService
 {
     get
     {
-        return this._columnsField;
+        return this._useCustomBaseServiceField;
     }
 }
 
@@ -121,46 +172,46 @@ public virtual void Initialize()
 {
     if ((this.Errors.HasErrors == false))
     {
-bool nameValueAcquired = false;
-if (this.Session.ContainsKey("name"))
+bool baseNameValueAcquired = false;
+if (this.Session.ContainsKey("baseName"))
 {
-    this._nameField = ((string)(this.Session["name"]));
-    nameValueAcquired = true;
+    this._baseNameField = ((string)(this.Session["baseName"]));
+    baseNameValueAcquired = true;
 }
-if ((nameValueAcquired == false))
+if ((baseNameValueAcquired == false))
 {
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("name");
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseName");
     if ((data != null))
     {
-        this._nameField = ((string)(data));
+        this._baseNameField = ((string)(data));
     }
 }
-bool controllerNamespaceValueAcquired = false;
-if (this.Session.ContainsKey("controllerNamespace"))
+bool baseNamespaceValueAcquired = false;
+if (this.Session.ContainsKey("baseNamespace"))
 {
-    this._controllerNamespaceField = ((string)(this.Session["controllerNamespace"]));
-    controllerNamespaceValueAcquired = true;
+    this._baseNamespaceField = ((string)(this.Session["baseNamespace"]));
+    baseNamespaceValueAcquired = true;
 }
-if ((controllerNamespaceValueAcquired == false))
+if ((baseNamespaceValueAcquired == false))
 {
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("controllerNamespace");
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseNamespace");
     if ((data != null))
     {
-        this._controllerNamespaceField = ((string)(data));
+        this._baseNamespaceField = ((string)(data));
     }
 }
-bool columnsValueAcquired = false;
-if (this.Session.ContainsKey("columns"))
+bool useCustomBaseServiceValueAcquired = false;
+if (this.Session.ContainsKey("useCustomBaseService"))
 {
-    this._columnsField = ((global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>)(this.Session["columns"]));
-    columnsValueAcquired = true;
+    this._useCustomBaseServiceField = ((bool)(this.Session["useCustomBaseService"]));
+    useCustomBaseServiceValueAcquired = true;
 }
-if ((columnsValueAcquired == false))
+if ((useCustomBaseServiceValueAcquired == false))
 {
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("columns");
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("useCustomBaseService");
     if ((data != null))
     {
-        this._columnsField = ((global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>)(data));
+        this._useCustomBaseServiceField = ((bool)(data));
     }
 }
 
@@ -181,7 +232,7 @@ if ((columnsValueAcquired == false))
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public class TestTemplateBase
+    public class ServiceTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

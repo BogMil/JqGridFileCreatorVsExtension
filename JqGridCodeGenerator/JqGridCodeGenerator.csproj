@@ -54,6 +54,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ColumnsExtension.cs" />
     <Compile Include="Commands\CustomCommand.cs" />
     <Compile Include="Commands\GoToNextPageCommand.cs" />
     <Compile Include="Commands\GoToPreviousPageCommand.cs" />
@@ -65,10 +66,30 @@
     <Compile Include="OpenJqGridCodeGeneratorMenuPackage.cs" />
     <Compile Include="ProjectItemsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="T4Templates\ControllerTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ControllerTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4Templates\IRepositoryTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IRepositoryTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Include="T4Templates\IServiceTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IServiceTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4Templates\ModelTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4Templates\RepositoryTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RepositoryTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="T4Templates\ServiceTemplate.cs">
       <AutoGen>True</AutoGen>
@@ -95,9 +116,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
+    <Content Include="T4Templates\ControllerTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ControllerTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="T4Templates\IRepositoryTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>IRepositoryTemplate.cs</LastGenOutput>
+    </Content>
     <Content Include="T4Templates\IServiceTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>IServiceTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="T4Templates\ModelTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ModelTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="T4Templates\RepositoryTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RepositoryTemplate.cs</LastGenOutput>
     </Content>
     <Content Include="T4Templates\ServiceTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

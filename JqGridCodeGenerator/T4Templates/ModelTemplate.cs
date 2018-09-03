@@ -18,9 +18,9 @@ namespace JqGridCodeGenerator.T4Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public partial class ServiceTemplate : ServiceTemplateBase
+    public partial class ModelTemplate : ModelTemplateBase
     {
 #line hidden
         /// <summary>
@@ -28,202 +28,8 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using AutoMapper;\r\nusing GenericCSR.Service;\r\nusing ");
-            
-            #line 11 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Models;\r\nusing ");
-            
-            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Repositories;\r\nusing ");
-            
-            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Repositories.Interfaces;\r\nusing ");
-            
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Services.CRUD.Interfaces;\r\n\r\nnamespace ");
-            
-            #line 16 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Service.CRUD\r\n{\r\n\tpublic class ");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Service : GenericService<");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("QueryDto,");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("CommandDto,I");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Repository,");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
-            
-            #line default
-            #line hidden
-            this.Write(">,I");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Service\r\n\t{\r\n\t\tpublic ");
-            
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Service(I");
-            
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Repository repository, IMapper mapper) : base(repository, mapper)\r\n        {\r\n\r\n " +
-                    "       }\r\n\t}\r\n}");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-
-private string _baseNameField;
-
-/// <summary>
-/// Access the baseName parameter of the template.
-/// </summary>
-private string baseName
-{
-    get
-    {
-        return this._baseNameField;
-    }
-}
-
-private string _baseNamespaceField;
-
-/// <summary>
-/// Access the baseNamespace parameter of the template.
-/// </summary>
-private string baseNamespace
-{
-    get
-    {
-        return this._baseNamespaceField;
-    }
-}
-
-private string _tableNameField;
-
-/// <summary>
-/// Access the tableName parameter of the template.
-/// </summary>
-private string tableName
-{
-    get
-    {
-        return this._tableNameField;
-    }
-}
-
-
-/// <summary>
-/// Initialize the template
-/// </summary>
-public virtual void Initialize()
-{
-    if ((this.Errors.HasErrors == false))
-    {
-bool baseNameValueAcquired = false;
-if (this.Session.ContainsKey("baseName"))
-{
-    this._baseNameField = ((string)(this.Session["baseName"]));
-    baseNameValueAcquired = true;
-}
-if ((baseNameValueAcquired == false))
-{
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseName");
-    if ((data != null))
-    {
-        this._baseNameField = ((string)(data));
-    }
-}
-bool baseNamespaceValueAcquired = false;
-if (this.Session.ContainsKey("baseNamespace"))
-{
-    this._baseNamespaceField = ((string)(this.Session["baseNamespace"]));
-    baseNamespaceValueAcquired = true;
-}
-if ((baseNamespaceValueAcquired == false))
-{
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseNamespace");
-    if ((data != null))
-    {
-        this._baseNamespaceField = ((string)(data));
-    }
-}
-bool tableNameValueAcquired = false;
-if (this.Session.ContainsKey("tableName"))
-{
-    this._tableNameField = ((string)(this.Session["tableName"]));
-    tableNameValueAcquired = true;
-}
-if ((tableNameValueAcquired == false))
-{
-    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("tableName");
-    if ((data != null))
-    {
-        this._tableNameField = ((string)(data));
-    }
-}
-
-
-    }
-}
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default
@@ -233,7 +39,7 @@ if ((tableNameValueAcquired == false))
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public class ServiceTemplateBase
+    public class ModelTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

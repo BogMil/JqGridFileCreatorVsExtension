@@ -14,7 +14,7 @@
     <Grid>
         <StackPanel>
             <TextBox Text="{Binding SqlServerName, Source={StaticResource vm}, Mode=TwoWay}" Margin="10 10 10 10"/>
-            <CheckBox Margin="10 10 10 10" Content=" Use Windows Identity" IsChecked="{Binding UseWindowsIdentity, Source={StaticResource vm}, Mode=TwoWay}">
+            <CheckBox Margin="10 5 10 0" Content=" Use Windows Identity" IsChecked="{Binding UseWindowsIdentity, Source={StaticResource vm}, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked">
                         <i:InvokeCommandAction Command="{Binding HandleCredentialsFormVisibilityCommand, Source={StaticResource vm}}" x:Name="interactivityFix"
@@ -26,34 +26,75 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </CheckBox>
-            <StackPanel Margin="10 10 10 10" x:Name="CredentialsForm" >
+            <StackPanel Margin="10 5 10 0" x:Name="CredentialsForm" >
                 <Label>Username</Label>
                 <TextBox Text="{Binding Username, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
                 <Label>Password</Label>
                 <TextBox Text="{Binding Password, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
             </StackPanel>
-            <Button Command="{Binding PopulateComboBoxWithDatabasesCommand, Source={StaticResource vm}}" CommandParameter="{Binding }" Margin="10 10 10 10">Prikazi Baze</Button>
-            <ComboBox ItemsSource="{Binding DatabaseEntries, Source={StaticResource vm},Mode=OneWay}"
+            <Button Command="{Binding PopulateComboBoxWithDatabasesCommand, Source={StaticResource vm}}" 
+                    CommandParameter="{Binding }" 
+                    Margin="10 5 10 0"
+                    Width="100">Connect</Button>
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding DatabaseEntries, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
                   SelectedValue="{Binding DatabaseEntry, Source={StaticResource vm}, Mode=TwoWay}" />
 
-            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Tables, Source={StaticResource vm},Mode=OneWay}"
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding Tables, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
                   SelectedValue="{Binding Table, Source={StaticResource vm}, Mode=TwoWay}" />
 
-            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Controllers, Source={StaticResource vm},Mode=OneWay}"
+            <TextBox Margin="10 5 10 0" Text="{Binding BaseName, Source={StaticResource vm}, Mode=TwoWay}"></TextBox>
+
+            <CheckBox Margin="10 5 10 0" Content=" Use custom Base Controller" 
+                      IsChecked="{Binding UseBaseController, Source={StaticResource vm}, Mode=TwoWay}"
+                      IsEnabled="{Binding IsUseBaseControllerEnabled, Source={StaticResource vm}, Mode=OneWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked">
+                        <i:InvokeCommandAction Command="{Binding HandleControllersComboBoxVisibilityCommand, Source={StaticResource vm}}"
+                                               CommandParameter="{Binding ElementName=ControllersComboBox}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="Unchecked">
+                        <i:InvokeCommandAction Command="{Binding HandleControllersComboBoxVisibilityCommand, Source={StaticResource vm}}"
+                                               CommandParameter="{Binding ElementName=ControllersComboBox}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding Controllers, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
-                  SelectedValue="{Binding Controller, Source={StaticResource vm}, Mode=TwoWay}" />
+                  SelectedValue="{Binding Controller, Source={StaticResource vm}, Mode=TwoWay}" 
+                  Name="ControllersComboBox"
+                  IsEnabled="False"/>
 
-            <ComboBox Margin="0 5 0 0" ItemsSource="{Binding Services, Source={StaticResource vm},Mode=OneWay}"
+            <CheckBox Margin="10 5 10 0" Content=" Use custom Base Repository" 
+                      IsChecked="{Binding UseBaseRepository, Source={StaticResource vm}, Mode=TwoWay}" 
+                      IsEnabled="{Binding IsUseBaseRepositoryEnabled, Source={StaticResource vm}, Mode=OneWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked">
+                        <i:InvokeCommandAction Command="{Binding HandleRepositoriesComboBoxVisibilityCommand, Source={StaticResource vm}}"
+                                               CommandParameter="{Binding ElementName=RepositoriesComboBox}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="Unchecked">
+                        <i:InvokeCommandAction Command="{Binding HandleRepositoriesComboBoxVisibilityCommand, Source={StaticResource vm}}"
+                                               CommandParameter="{Binding ElementName=RepositoriesComboBox}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding Repositories, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
-                  SelectedValue="{Binding Service, Source={StaticResource vm}, Mode=TwoWay}" />
+                  SelectedValue="{Binding Service, Source={StaticResource vm}, Mode=TwoWay}" 
+                  Name="RepositoriesComboBox"
+                  IsEnabled="False"/>
 
-            <Button Margin="0 10 0 0" Command="{Binding CreateFilesCommand, Source={StaticResource vm}}" Name="CreateFiles">
+            <Button Margin="10 5 10 0" Command="{Binding CreateFilesCommand, Source={StaticResource vm}}" 
+                    Name="CreateFiles"
+                    Width="100">
                 Create files
             </Button>
             

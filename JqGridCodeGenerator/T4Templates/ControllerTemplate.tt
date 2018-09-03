@@ -1,0 +1,28 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ parameter type="System.String" name="baseName" #>
+<#@ parameter type="System.String" name="baseNamespace" #>
+using System.Web.Mvc;
+using GenericCSR.Service;
+using GenericCSR.Controller;
+using <#= baseNamespace#>.Models;
+using <#= baseNamespace#>.Services.CRUD.Interfaces;
+
+namespace <#= baseNamespace #>.Controllers
+{
+	public class <#= baseName #>Controller : GenericController<<#= baseName #>Service,<#= baseName #>ViewModel,<#= baseName #>QueryDto,<#= baseName #>CommandDto>
+	{
+		public <#= baseName #>Controller(I<#= baseName #>Service service) : base(service)
+        {
+
+        }
+
+		public ActionResult Index()
+		{
+			return View();
+		}
+	}
+}

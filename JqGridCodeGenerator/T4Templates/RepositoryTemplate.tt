@@ -6,20 +6,25 @@
 <#@ parameter type="System.String" name="baseName" #>
 <#@ parameter type="System.String" name="baseNamespace" #>
 <#@ parameter type="System.String" name="tableName" #>
-using AutoMapper;
+<#@ parameter type="System.String" name="primaryKeyName" #>
 using GenericCSR.Service;
+using GenericCSR.Repository;
 using <#= baseNamespace#>.Models;
-using <#= baseNamespace#>.Repositories;
 using <#= baseNamespace#>.Repositories.Interfaces;
 using <#= baseNamespace#>.Services.CRUD.Interfaces;
 
-namespace <#= baseNamespace #>.Service.CRUD
+namespace <#= baseNamespace #>.Repositories
 {
-	public class <#= baseName #>Service : GenericService<<#= baseName #>QueryDto,<#= baseName #>CommandDto,I<#= baseName #>Repository,<#=tableName#>>,I<#= baseName #>Service
+	public class <#= baseName #>Repository : GenericRepository<<#=tableName#>,ToDoContexType,<#= baseName #>OrderByPredicateCreator,<#= baseName #>FilterPredicateCreator>,I<#= baseName #>Repository
 	{
-		public <#= baseName #>Service(I<#= baseName #>Repository repository, IMapper mapper) : base(repository, mapper)
+		public <#= baseName #>Repository(ToDoContexType context) : base(context)
         {
 
         }
+
+		protected override object GetPrimaryKey(<#=tableName#> entity)
+		{
+			return entity.<#=primaryKeyName#>;		
+		}
 	}
 }

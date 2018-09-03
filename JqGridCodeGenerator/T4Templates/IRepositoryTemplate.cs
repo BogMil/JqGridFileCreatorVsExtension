@@ -18,9 +18,9 @@ namespace JqGridCodeGenerator.T4Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+    #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public partial class ServiceTemplate : ServiceTemplateBase
+    public partial class IRepositoryTemplate : IRepositoryTemplateBase
     {
 #line hidden
         /// <summary>
@@ -28,103 +28,39 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using AutoMapper;\r\nusing GenericCSR.Service;\r\nusing ");
+            this.Write("using GenericCSR.Repository;\r\nusing ");
             
-            #line 11 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            #line 10 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
-            this.Write(".Models;\r\nusing ");
+            this.Write(".Models;\r\n\r\nnamespace ");
             
-            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
-            this.Write(".Repositories;\r\nusing ");
+            this.Write(".Repositories.Interfaces\r\n{\r\n\tpublic interface I");
             
-            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Repositories.Interfaces;\r\nusing ");
-            
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Services.CRUD.Interfaces;\r\n\r\nnamespace ");
-            
-            #line 16 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Service.CRUD\r\n{\r\n\tpublic class ");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
-            this.Write("Service : GenericService<");
+            this.Write("Repository : IGenericRepository<");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("QueryDto,");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("CommandDto,I");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Repository,");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default
             #line hidden
-            this.Write(">,I");
-            
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Service\r\n\t{\r\n\t\tpublic ");
-            
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Service(I");
-            
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
-            
-            #line default
-            #line hidden
-            this.Write("Repository repository, IMapper mapper) : base(repository, mapper)\r\n        {\r\n\r\n " +
-                    "       }\r\n\t}\r\n}");
+            this.Write(">\r\n\t{\r\n\r\n\t}\r\n}");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ServiceTemplate.tt"
+        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
 
 private string _baseNameField;
 
@@ -233,7 +169,7 @@ if ((tableNameValueAcquired == false))
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public class ServiceTemplateBase
+    public class IRepositoryTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

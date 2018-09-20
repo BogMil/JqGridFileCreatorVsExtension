@@ -101,6 +101,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TestTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Include="TypeWithNamespaceExtensions.cs" />
     <Compile Include="ViewModel\ChooseDataBaseViewModel.cs" />
     <Compile Include="ViewModel\JqGridCodeGeneratorWindowViewModel.cs" />
     <Compile Include="View\Pages\ChooseDataBasePage.cs" />

@@ -1,5 +1,5 @@
-﻿using JqGridCodeGenerator.Commands;
-using JqGridCodeGenerator.View.Pages;
+﻿//DUSANRAZVOJ-PC\SQLEXPRESS
+using JqGridCodeGenerator.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,11 +33,7 @@ namespace JqGridCodeGenerator.ViewModel
         public ICommand PopulateComboBoxWithTables { get; set; }
         public ICommand CreateFilesCommand { get; set; }
 
-        public List<Column> Columns = new List<Column>() {
-            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column1" },
-            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column2" },
-            new Column {DataType="test1",IsNullable=false,IsPrimaryKey=false,Name="Column3" }
-        };
+        public List<Column> Columns = new List<Column>();
 
         private void onPropertyChanged(string property)
         {
@@ -67,9 +63,15 @@ namespace JqGridCodeGenerator.ViewModel
             if(AddedFolders.Count>0)
                 MessageBox.Show(message,"Informacija");
 
-            IsUseBaseControllerEnabled = Controllers.Count>0;
-            IsUseBaseRepositoryEnabled = Repositories.Count>0;
+            IsUseBaseControllerEnabled = BaseControllers.Count>0;
+            IsUseBaseRepositoryEnabled = BaseRepositories.Count>0;
         }
+
+        private Column _primaryKeyColumn;
+        private List<TypeWithNamespace> _controllersWithNamespaces = null;
+        private List<TypeWithNamespace> _repositoriesWithNamespaces = null;
+        private string _baseControllerNamespace = null;
+        private string _baseRepositoryNamespace = null;
 
         private CollectionView _databaseEntries;
         public CollectionView DatabaseEntries
@@ -114,54 +116,56 @@ namespace JqGridCodeGenerator.ViewModel
             {
                 if (_table == value) return;
                 _table = value;
-                onPropertyChanged("Table");
                 GetColumns();
+                onPropertyChanged("Table");
             }
         }
 
-        private CollectionView _controllers;
-        public CollectionView Controllers
+        private CollectionView _baseControllers;
+        public CollectionView BaseControllers
         {
-            get { return _controllers; }
+            get { return _baseControllers; }
             set
             {
-                _controllers = value;
-                onPropertyChanged("Controllers");
+                _baseControllers = value;
+                onPropertyChanged("BaseControllers");
             }
         }
 
-        private string _controller;
-        public string Controller
+        private string _baseController;
+        public string BaseController
         {
-            get { return _controller; }
+            get { return _baseController; }
             set
             {
-                if (_controller == value) return;
-                _controller = value;
-                onPropertyChanged("Controller");
+                if (_baseController == value) return;
+                _baseController = value;
+                _baseControllerNamespace = _controllersWithNamespaces.GetNamespaceForType(value);
+                onPropertyChanged("BaseController");
             }
         }
 
-        private CollectionView _repositories;
-        public CollectionView Repositories
+        private CollectionView _baseRepositories;
+        public CollectionView BaseRepositories
         {
-            get { return _repositories; }
+            get { return _baseRepositories; }
             set
             {
-                _repositories = value;
-                onPropertyChanged("Repositories");
+                _baseRepositories = value;
+                onPropertyChanged("BaseRepositories");
             }
         }
 
-        private string _repository;
-        public string Repository
+        private string _baseRepository;
+        public string BaseRepository
         {
-            get { return _repository; }
+            get { return _baseRepository; }
             set
             {
-                if (_repository == value) return;
-                _repository = value;
-                onPropertyChanged("Repository");
+                if (_baseRepository == value) return;
+                _baseRepository = value;
+                _baseRepositoryNamespace = _repositoriesWithNamespaces.GetNamespaceForType(value);
+                onPropertyChanged("BaseRepository");
             }
         }
 
@@ -362,25 +366,35 @@ namespace JqGridCodeGenerator.ViewModel
                     select new Column()
                     {
                         Name = info["COLUMN_NAME"].ToString(),
-                        DataType = info["DATA_TYPE"].ToString(),
-                        //IsNullable = info["IS_NULLABLE"]
+                        Type = info["DATA_TYPE"].ToString(),
+                        IsNullable = info["IS_NULLABLE"].ToString() == "YES"
                     }).ToList();
+
+                Columns = new List<Column>();
+                foreach (var column in columns)
+                    Columns.Add(column);
 
                 columnRestrictions[3] = "PK_"+Table;
 
-                DataTable departmentIDSchemaTable = conn.GetSchema("IndexColumns", columnRestrictions);
-                var primaryKey = (from info in departmentIDSchemaTable.AsEnumerable()
+                shemaTable = conn.GetSchema("IndexColumns", columnRestrictions);
+                var primaryKey = (from info in shemaTable.AsEnumerable()
                     select new{
                         ColumnName = info["COLUMN_NAME"].ToString()
                     }).ToList().FirstOrDefault();
-                if(primaryKey!=null)
-                    foreach(var column in columns)
-                    {
+
+                if (primaryKey != null)
+                {
+                    foreach (var column in columns)
                         if (column.Name == primaryKey.ColumnName)
                             column.IsPrimaryKey = true;
-                    }
-
-                Columns = columns;
+                        
+                    _primaryKeyColumn = columns.GetPrimaryKeyColumn();
+                }
+                else
+                {
+                    _primaryKeyColumn = null;
+                    MessageBox.Show("Tabela nema primarni kljuc. Morate izabrati tabelu koja ima primarni kljuc", "Informacija");
+                }
 
                 conn.Close();
             }
@@ -446,7 +460,7 @@ namespace JqGridCodeGenerator.ViewModel
                 return;
             }
 
-            if (Columns.GetPrimaryKey() == String.Empty || Columns.GetPrimaryKey() == null)
+            if (_primaryKeyColumn == null)
             {
                 MessageBox.Show("Tabela nema primarni kljuc. Nije moguce koristiti GenericCRS za tabele koje nemaju primarni kljuc", "Informacija");
                 return;
@@ -462,6 +476,7 @@ namespace JqGridCodeGenerator.ViewModel
             CreateIRepositoryFile(activeProject, rootFolder);
             CreateRepositoryFile(activeProject, rootFolder);
             CreateControllerFile(activeProject, rootFolder);
+            CreateModelFile(activeProject, rootFolder);
 
             JqGridCodeGeneratorWindow.Instance.Close();
         }
@@ -522,7 +537,10 @@ namespace JqGridCodeGenerator.ViewModel
                 ["baseName"] = BaseName,
                 ["tableName"] = Table,
                 ["baseNamespace"] = GetBaseNamespace(rootFolder),
-                ["primaryKeyName"] = Columns.GetPrimaryKey()
+                ["primaryKeyName"] = _primaryKeyColumn.Name,
+                ["useBaseRepository"] = _UseBaseRepository,
+                ["baseRepositoryNamespace"] = _baseRepositoryNamespace,
+                ["baseRepositoryName"] = BaseRepository
             };
             page.Initialize();
 
@@ -544,7 +562,35 @@ namespace JqGridCodeGenerator.ViewModel
             page.Session = new TextTemplatingSession
             {
                 ["baseName"] = BaseName,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder)
+                ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                ["useBaseController"] = _UseBaseController,
+                ["baseControllerNamespace"] = _baseControllerNamespace,
+                ["baseControllerName"] = BaseController
+            };
+            page.Initialize();
+
+            var pageContent = page.TransformText();
+            File.WriteAllText(filePath, pageContent);
+
+            activeProject.ProjectItems.AddFromFile(filePath);
+
+            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
+            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+        }
+
+        private void CreateModelFile(Project activeProject, DirectoryInfo rootFolder)
+        {
+            var filePath = rootFolder.FullName + "\\Models\\" + BaseName + ".cs";
+            var file = File.Create(filePath);
+            file.Close();
+            ModelTemplate page = new ModelTemplate();
+            page.Session = new TextTemplatingSession
+            {
+                ["baseName"] = BaseName,
+                ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                ["tableName"] = Table,
+                ["primaryKeyColumn"] = _primaryKeyColumn,
+                ["columns"] = Columns
             };
             page.Initialize();
 
@@ -662,11 +708,11 @@ namespace JqGridCodeGenerator.ViewModel
 
             var rootFolder = GetRootFolder();
 
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
+            List<TypeWithNamespace> listOfTypesWithNamespaces = new List<TypeWithNamespace>();
             var controllerFolder = activeProject.GetProjectItemByName("Controllers");
             foreach (ProjectItem controller in controllerFolder.ProjectItems)
             {
-                list= PopulateListWithTypesThatInheritBaseType(controller,list);
+                listOfTypesWithNamespaces= PopulateListWithTypesThatInheritBaseType(controller,listOfTypesWithNamespaces/*, "GenericController"*/);
             }
 
             if (IsRootFolderInArea(rootFolder))
@@ -676,10 +722,19 @@ namespace JqGridCodeGenerator.ViewModel
                 var areasControllerFolder = areasRootFolder.GetProjectItemByName("Controllers");
                 foreach (ProjectItem controller in areasControllerFolder.ProjectItems)
                 {
-                    list = PopulateListWithTypesThatInheritBaseType(controller, list);
+                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(controller, listOfTypesWithNamespaces/*,"GenericController"*/);
                 }
             }
-            Controllers = new CollectionView(list);
+
+            var listOfControllerName = listOfTypesWithNamespaces.Select(x => x.Name).ToList();
+            var comboBoxList = new List<ComboBoxItem>();
+
+            foreach(var controllerName in listOfControllerName)
+            {
+                comboBoxList.Add(new ComboBoxItem(controllerName));
+            }
+            _controllersWithNamespaces = listOfTypesWithNamespaces;
+            BaseControllers = new CollectionView(comboBoxList);
         }
 
         public void GetServices()
@@ -767,7 +822,7 @@ namespace JqGridCodeGenerator.ViewModel
 
             var rootFolder = GetRootFolder();
 
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
+            List<TypeWithNamespace> listOfTypesWithNamespaces = new List<TypeWithNamespace>();
             var repositoriesFolder = activeProject.GetProjectItemByName("Repositories");
 
             if (repositoriesFolder == null)
@@ -788,7 +843,7 @@ namespace JqGridCodeGenerator.ViewModel
                
                 foreach (ProjectItem repository in repositoriesFolder.ProjectItems)
                 {
-                    list = PopulateListWithTypesThatInheritBaseType(repository, list);
+                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository, listOfTypesWithNamespaces/*, "GenericRepository"*/);
                 }
                
             }
@@ -817,15 +872,24 @@ namespace JqGridCodeGenerator.ViewModel
                    
                     foreach (ProjectItem repository in RepositoriesFolderInRoot.ProjectItems)
                     {
-                        list = PopulateListWithTypesThatInheritBaseType(repository, list);
+                        listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository, listOfTypesWithNamespaces/*, "GenericRepository"*/);
                     }
                 }
             }
-            Repositories = new CollectionView(list);
+
+            var listOfRepositoryName = listOfTypesWithNamespaces.Select(x => x.Name).ToList();
+            var comboBoxList = new List<ComboBoxItem>();
+
+            foreach (var repositoryName in listOfRepositoryName)
+            {
+                comboBoxList.Add(new ComboBoxItem(repositoryName));
+            }
+            _repositoriesWithNamespaces = listOfTypesWithNamespaces;
+            BaseRepositories = new CollectionView(comboBoxList);
         }
 
 
-        public List<ComboBoxItem> PopulateListWithTypesThatInheritBaseType(ProjectItem projectItem, List<ComboBoxItem> list,string baseType=null)
+        public List<TypeWithNamespace> PopulateListWithTypesThatInheritBaseType(ProjectItem projectItem, List<TypeWithNamespace> list,string baseType=null)
         {
             if (!(projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile))
                 return list;
@@ -847,12 +911,12 @@ namespace JqGridCodeGenerator.ViewModel
                             if (!(baseClass is CodeClass bClass))
                                 continue;
                             if (bClass.Name == baseType)
-                                list.Add(new ComboBoxItem(type.Name));
+                                list.Add(new TypeWithNamespace(type.Name, type.Namespace.FullName));
                         }
                     }
                     else
                     {
-                        list.Add(new ComboBoxItem(type.Name));
+                        list.Add(new TypeWithNamespace(type.Name, type.Namespace.FullName));
                     }
                 }
 
@@ -892,10 +956,22 @@ namespace JqGridCodeGenerator.ViewModel
         }
     }
 
+    public class TypeWithNamespace
+    {
+        public string Name { get; set; }
+        public string Nmspc { get; set; }
+
+        public TypeWithNamespace(string name, string nmspc)
+        {
+            Name = name;
+            Nmspc = nmspc;
+        }
+    }
+
     public class Column
     {
         public string Name {get;set;}
-        public string DataType {get;set;}
+        public string Type {get;set;}
         public bool IsNullable { get; set; } = false;
         public bool IsPrimaryKey { get; set; } = false;
     }

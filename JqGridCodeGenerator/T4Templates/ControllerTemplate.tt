@@ -5,19 +5,31 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ parameter type="System.String" name="baseName" #>
 <#@ parameter type="System.String" name="baseNamespace" #>
-using System.Web.Mvc;
-using GenericCSR.Service;
+<#@ parameter type="System.String" name="baseControllerNamespace" #>
+<#@ parameter type="System.String" name="baseControllerName" #>
+<#@ parameter type="System.boolean" name="useBaseController" #>
+<# if(useBaseController) {
+	if(baseControllerNamespace != baseNamespace+".Controllers"){#>
+using <#= baseControllerNamespace #>;
+<# }}else{ #>
 using GenericCSR.Controller;
+<# } #>
+using System.Web.Mvc;
 using <#= baseNamespace#>.Models;
 using <#= baseNamespace#>.Services.CRUD.Interfaces;
 
 namespace <#= baseNamespace #>.Controllers
 {
-	public class <#= baseName #>Controller : GenericController<<#= baseName #>Service,<#= baseName #>ViewModel,<#= baseName #>QueryDto,<#= baseName #>CommandDto>
+	public class <#= baseName #>Controller : 
+	<# if(useBaseController) {#>
+		<#= baseControllerName #><I<#= baseName #>Service,<#= baseName #>ViewModel,<#= baseName #>QueryDto,<#= baseName #>CommandDto>
+	<# }else{ #>
+		GenericController<I<#= baseName #>Service,<#= baseName #>ViewModel,<#= baseName #>QueryDto,<#= baseName #>CommandDto>
+	<# } #>
 	{
 		public <#= baseName #>Controller(I<#= baseName #>Service service) : base(service)
         {
-
+			
         }
 
 		public ActionResult Index()

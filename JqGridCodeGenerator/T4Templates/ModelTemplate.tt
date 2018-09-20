@@ -3,3 +3,88 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ parameter type="System.String" name="baseName" #>
+<#@ parameter type="System.String" name="baseNamespace" #>
+<#@ parameter type="System.String" name="tableName" #>
+<#@ parameter type="JqGridCodeGenerator.ViewModel.Column" name="primaryKeyColumn" #>
+<#@ parameter type="System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>" name="columns" #>
+using AutoMapper;
+using GenericCSR;
+using GenericCSR.Filter;
+using GenericCSR.PropertyMapper;
+using PagedList;
+using System;
+using System.Linq.Expressions;
+
+namespace <#= baseNamespace #>.Models
+{
+	public class <#= baseName #>
+	{
+		<#
+			foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
+			{
+				if(column.IsPrimaryKey)
+					continue;
+		#>
+		public <#= column.Type #> <#= column.Name #> { get; set; }
+		<#
+			}
+		#>
+	}
+
+	public class <#= baseName #>QueryDto : <#= baseName #>
+    {
+		public <#= primaryKeyColumn.Type #> <#= primaryKeyColumn.Name #> { get; set; }
+    }
+
+	public class <#= baseName #>CommandDto : <#= baseName #>
+    {
+		public int id { get; set; }
+    }
+
+	public class <#= baseName #>ViewModel : GenericJqGridViewModel<<#= baseName #>QueryDto> {}
+
+	public class <#= baseName #>OrderByPredicateCreator : GenericOrderByPredicateCreator<<#= tableName#>,<#= baseName #>PropertyMapper>
+	{
+		protected override Expression<Func<<#=tableName#>,dynamic>> GetDefaultOrderByColumn()
+		{
+			return x=>x.ToDo_DefineDefaultOrderByColumn;	
+		}
+	}
+
+	public class <#= baseName #>WherePredicateCreator : GenericWherePredicateCreator<<#= tableName#>,<#= baseName #>PropertyMapper>{}
+
+	public class <#=baseName#>PropertyMapper : GenericPropertyMapper<<#= tableName #>, <#= baseName #>QueryDto>
+	{
+		public override Expression<Func<<#=tableName#>,dynamic>> GetPathInEfForDtoFieldExpression(string fieldName)
+		{
+			<#
+				foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
+				{
+			#>
+			if(fieldName == GetDtoPropertyPathAsString(t=>t.<#= column.Name #>))
+				return x => x.<#= column.Name #>;
+			<#						
+				}
+			#>
+
+			throw new Exception("Putem requesta je poslato nepostojece polje " + fieldName + 
+			"  Obezbediti da za svako polje iz QueryDto modela postoji odgovarajuce mapiranje u entity modelu (bazi).");
+		}
+
+	}
+
+	public class <#=baseName#>MappingProfile : Profile
+	{
+		public <#=baseName#>MappingProfile()
+		{
+			CreateMap<<#=tableName#>,<#=baseName#>QueryDto>();
+
+			CreateMap<<#=baseName#>CommandDto,<#=tableName#>>()
+				.ForMember(d => d.<#=primaryKeyColumn.Name#>, o => o.MapFrom(s => s.id));
+
+			CreateMap<PagedList<<#= tableName #>>, StaticPagedList<<#= baseName #>QueryDto>>()
+				.ConvertUsing<PagedListConverter<<#= tableName #>,<#= baseName #>QueryDto>>();
+		}
+	}
+}

@@ -63,10 +63,10 @@
                 </i:Interaction.Triggers>
             </CheckBox>
 
-            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding Controllers, Source={StaticResource vm},Mode=OneWay}"
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding BaseControllers, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
-                  SelectedValue="{Binding Controller, Source={StaticResource vm}, Mode=TwoWay}" 
+                  SelectedValue="{Binding BaseController, Source={StaticResource vm}, Mode=TwoWay}" 
                   Name="ControllersComboBox"
                   IsEnabled="False"/>
 
@@ -85,10 +85,10 @@
                 </i:Interaction.Triggers>
             </CheckBox>
 
-            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding Repositories, Source={StaticResource vm},Mode=OneWay}"
+            <ComboBox Margin="10 5 10 0" ItemsSource="{Binding BaseRepositories, Source={StaticResource vm},Mode=OneWay}"
                   DisplayMemberPath="Name"
                   SelectedValuePath="Name"
-                  SelectedValue="{Binding Service, Source={StaticResource vm}, Mode=TwoWay}" 
+                  SelectedValue="{Binding BaseRepository, Source={StaticResource vm}, Mode=TwoWay}" 
                   Name="RepositoriesComboBox"
                   IsEnabled="False"/>
 

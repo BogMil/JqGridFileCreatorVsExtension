@@ -28,87 +28,149 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using GenericCSR.Service;\r\nusing GenericCSR.Repository;\r\nusing ");
             
-            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ if(useBaseRepository) {
+	if(baseRepositoryNamespace != baseNamespace+".Repository") 
+            
+            #line default
+            #line hidden
+            this.Write("using ");
+            
+            #line 15 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseRepositoryNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n");
+            
+            #line 16 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ }else{ 
+            
+            #line default
+            #line hidden
+            this.Write("using GenericCSR.Repository;\r\n");
+            
+            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("using ");
+            
+            #line 19 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
             this.Write(".Models;\r\nusing ");
             
-            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
-            this.Write(".Repositories.Interfaces;\r\nusing ");
+            this.Write(".Repositories.Interfaces;\r\n\r\nnamespace ");
             
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Services.CRUD.Interfaces;\r\n\r\nnamespace ");
-            
-            #line 16 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 22 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
             this.Write(".Repositories\r\n{\r\n\tpublic class ");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 24 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
-            this.Write("Repository : GenericRepository<");
+            this.Write("Repository : \r\n\t");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 25 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ if(useBaseRepository) {
+            
+            #line default
+            #line hidden
+            this.Write("\t\t");
+            
+            #line 26 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseRepositoryName));
+            
+            #line default
+            #line hidden
+            this.Write("<");
+            
+            #line 26 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default
             #line hidden
-            this.Write(",ToDoContexType,");
+            this.Write(",");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 26 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
             this.Write("OrderByPredicateCreator,");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 26 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
-            this.Write("FilterPredicateCreator>,I");
+            this.Write("WherePredicateCreator>,\r\n\t");
             
-            #line 18 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 27 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ }else{ 
+            
+            #line default
+            #line hidden
+            this.Write("\t\tGenericRepository<");
+            
+            #line 28 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",ToDo_ContexType,");
+            
+            #line 28 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
-            this.Write("Repository\r\n\t{\r\n\t\tpublic ");
+            this.Write("OrderByPredicateCreator,");
             
-            #line 20 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 28 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
-            this.Write("Repository(ToDoContexType context) : base(context)\r\n        {\r\n\r\n        }\r\n\r\n\t\tp" +
-                    "rotected override object GetPrimaryKey(");
+            this.Write("WherePredicateCreator>>,\r\n\t");
             
-            #line 25 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 29 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\tI");
+            
+            #line 30 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("Repository\r\n\t{\r\n\t\tprotected override object GetPrimaryKey(");
+            
+            #line 32 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default
             #line hidden
             this.Write(" entity)\r\n\t\t{\r\n\t\t\treturn entity.");
             
-            #line 27 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
+            #line 34 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\RepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primaryKeyName));
             
             #line default
@@ -168,6 +230,45 @@ private string primaryKeyName
     get
     {
         return this._primaryKeyNameField;
+    }
+}
+
+private string _baseRepositoryNamespaceField;
+
+/// <summary>
+/// Access the baseRepositoryNamespace parameter of the template.
+/// </summary>
+private string baseRepositoryNamespace
+{
+    get
+    {
+        return this._baseRepositoryNamespaceField;
+    }
+}
+
+private string _baseRepositoryNameField;
+
+/// <summary>
+/// Access the baseRepositoryName parameter of the template.
+/// </summary>
+private string baseRepositoryName
+{
+    get
+    {
+        return this._baseRepositoryNameField;
+    }
+}
+
+private bool _useBaseRepositoryField;
+
+/// <summary>
+/// Access the useBaseRepository parameter of the template.
+/// </summary>
+private bool useBaseRepository
+{
+    get
+    {
+        return this._useBaseRepositoryField;
     }
 }
 
@@ -233,6 +334,48 @@ if ((primaryKeyNameValueAcquired == false))
     if ((data != null))
     {
         this._primaryKeyNameField = ((string)(data));
+    }
+}
+bool baseRepositoryNamespaceValueAcquired = false;
+if (this.Session.ContainsKey("baseRepositoryNamespace"))
+{
+    this._baseRepositoryNamespaceField = ((string)(this.Session["baseRepositoryNamespace"]));
+    baseRepositoryNamespaceValueAcquired = true;
+}
+if ((baseRepositoryNamespaceValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseRepositoryNamespace");
+    if ((data != null))
+    {
+        this._baseRepositoryNamespaceField = ((string)(data));
+    }
+}
+bool baseRepositoryNameValueAcquired = false;
+if (this.Session.ContainsKey("baseRepositoryName"))
+{
+    this._baseRepositoryNameField = ((string)(this.Session["baseRepositoryName"]));
+    baseRepositoryNameValueAcquired = true;
+}
+if ((baseRepositoryNameValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseRepositoryName");
+    if ((data != null))
+    {
+        this._baseRepositoryNameField = ((string)(data));
+    }
+}
+bool useBaseRepositoryValueAcquired = false;
+if (this.Session.ContainsKey("useBaseRepository"))
+{
+    this._useBaseRepositoryField = ((bool)(this.Session["useBaseRepository"]));
+    useBaseRepositoryValueAcquired = true;
+}
+if ((useBaseRepositoryValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("useBaseRepository");
+    if ((data != null))
+    {
+        this._useBaseRepositoryField = ((bool)(data));
     }
 }
 

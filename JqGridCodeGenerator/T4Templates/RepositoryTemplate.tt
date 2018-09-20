@@ -7,21 +7,28 @@
 <#@ parameter type="System.String" name="baseNamespace" #>
 <#@ parameter type="System.String" name="tableName" #>
 <#@ parameter type="System.String" name="primaryKeyName" #>
-using GenericCSR.Service;
+<#@ parameter type="System.String" name="baseRepositoryNamespace" #>
+<#@ parameter type="System.String" name="baseRepositoryName" #>
+<#@ parameter type="System.boolean" name="useBaseRepository" #>
+<# if(useBaseRepository) {
+	if(baseRepositoryNamespace != baseNamespace+".Repository") #>
+using <#= baseRepositoryNamespace #>;
+<# }else{ #>
 using GenericCSR.Repository;
+<# } #>
 using <#= baseNamespace#>.Models;
 using <#= baseNamespace#>.Repositories.Interfaces;
-using <#= baseNamespace#>.Services.CRUD.Interfaces;
 
 namespace <#= baseNamespace #>.Repositories
 {
-	public class <#= baseName #>Repository : GenericRepository<<#=tableName#>,ToDoContexType,<#= baseName #>OrderByPredicateCreator,<#= baseName #>FilterPredicateCreator>,I<#= baseName #>Repository
+	public class <#= baseName #>Repository : 
+	<# if(useBaseRepository) {#>
+		<#= baseRepositoryName #><<#= tableName #>,<#= baseName #>OrderByPredicateCreator,<#= baseName #>WherePredicateCreator>,
+	<# }else{ #>
+		GenericRepository<<#=tableName#>,ToDo_ContexType,<#= baseName #>OrderByPredicateCreator,<#= baseName #>WherePredicateCreator>>,
+	<# } #>
+	I<#= baseName #>Repository
 	{
-		public <#= baseName #>Repository(ToDoContexType context) : base(context)
-        {
-
-        }
-
 		protected override object GetPrimaryKey(<#=tableName#> entity)
 		{
 			return entity.<#=primaryKeyName#>;		

@@ -28,8 +28,461 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
+            this.Write("using AutoMapper;\r\nusing GenericCSR;\r\nusing GenericCSR.Filter;\r\nusing GenericCSR." +
+                    "PropertyMapper;\r\nusing PagedList;\r\nusing System;\r\nusing System.Linq.Expressions;" +
+                    "\r\n\r\nnamespace ");
+            
+            #line 19 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Models\r\n{\r\n\tpublic class ");
+            
+            #line 21 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t{\r\n\t\t");
+            
+            #line 23 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+
+			foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
+			{
+				if(column.IsPrimaryKey)
+					continue;
+		
+            
+            #line default
+            #line hidden
+            this.Write("\t\tpublic ");
+            
+            #line 29 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Type));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 29 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" { get; set; }\r\n\t\t");
+            
+            #line 30 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+
+			}
+		
+            
+            #line default
+            #line hidden
+            this.Write("\t}\r\n\r\n\tpublic class ");
+            
+            #line 35 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto : ");
+            
+            #line 35 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n    {\r\n\t\tpublic ");
+            
+            #line 37 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(primaryKeyColumn.Type));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 37 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(primaryKeyColumn.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" { get; set; }\r\n    }\r\n\r\n\tpublic class ");
+            
+            #line 40 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("CommandDto : ");
+            
+            #line 40 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n    {\r\n\t\tpublic int id { get; set; }\r\n    }\r\n\r\n\tpublic class ");
+            
+            #line 45 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("ViewModel : GenericJqGridViewModel<");
+            
+            #line 45 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto> {}\r\n\r\n\tpublic class ");
+            
+            #line 47 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("OrderByPredicateCreator : GenericOrderByPredicateCreator<");
+            
+            #line 47 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",");
+            
+            #line 47 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("PropertyMapper>\r\n\t{\r\n\t\tprotected override Expression<Func<");
+            
+            #line 49 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",dynamic>> GetDefaultOrderByColumn()\r\n\t\t{\r\n\t\t\treturn x=>x.ToDo_DefineDefaultOrder" +
+                    "ByColumn;\t\r\n\t\t}\r\n\t}\r\n\r\n\tpublic class ");
+            
+            #line 55 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("WherePredicateCreator : GenericWherePredicateCreator<");
+            
+            #line 55 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",");
+            
+            #line 55 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("PropertyMapper>{}\r\n\r\n\tpublic class ");
+            
+            #line 57 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("PropertyMapper : GenericPropertyMapper<");
+            
+            #line 57 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(", ");
+            
+            #line 57 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto>\r\n\t{\r\n\t\tpublic override Expression<Func<");
+            
+            #line 59 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",dynamic>> GetPathInEfForDtoFieldExpression(string fieldName)\r\n\t\t{\r\n\t\t\t");
+            
+            #line 61 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+
+				foreach (JqGridCodeGenerator.ViewModel.Column column in columns)
+				{
+			
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\tif(fieldName == GetDtoPropertyPathAsString(t=>t.");
+            
+            #line 65 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
+            
+            #line default
+            #line hidden
+            this.Write("))\r\n\t\t\t\treturn x => x.");
+            
+            #line 66 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(column.Name));
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n\t\t\t");
+            
+            #line 67 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+						
+				}
+			
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t\t\tthrow new Exception(\"Putem requesta je poslato nepostojece polje \" + fieldNa" +
+                    "me + \r\n\t\t\t\"  Obezbediti da za svako polje iz QueryDto modela postoji odgovarajuc" +
+                    "e mapiranje u entity modelu (bazi).\");\r\n\t\t}\r\n\r\n\t}\r\n\r\n\tpublic class ");
+            
+            #line 77 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("MappingProfile : Profile\r\n\t{\r\n\t\tpublic ");
+            
+            #line 79 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("MappingProfile()\r\n\t\t{\r\n\t\t\tCreateMap<");
+            
+            #line 81 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",");
+            
+            #line 81 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto>();\r\n\r\n\t\t\tCreateMap<");
+            
+            #line 83 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("CommandDto,");
+            
+            #line 83 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(">()\r\n\t\t\t\t.ForMember(d => d.");
+            
+            #line 84 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(primaryKeyColumn.Name));
+            
+            #line default
+            #line hidden
+            this.Write(", o => o.MapFrom(s => s.id));\r\n\r\n\t\t\tCreateMap<PagedList<");
+            
+            #line 86 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(">, StaticPagedList<");
+            
+            #line 86 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto>>()\r\n\t\t\t\t.ConvertUsing<PagedListConverter<");
+            
+            #line 87 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
+            
+            #line default
+            #line hidden
+            this.Write(",");
+            
+            #line 87 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
+            
+            #line default
+            #line hidden
+            this.Write("QueryDto>>();\r\n\t\t}\r\n\t}\r\n}");
             return this.GenerationEnvironment.ToString();
         }
+        
+        #line 1 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\ModelTemplate.tt"
+
+private string _baseNameField;
+
+/// <summary>
+/// Access the baseName parameter of the template.
+/// </summary>
+private string baseName
+{
+    get
+    {
+        return this._baseNameField;
+    }
+}
+
+private string _baseNamespaceField;
+
+/// <summary>
+/// Access the baseNamespace parameter of the template.
+/// </summary>
+private string baseNamespace
+{
+    get
+    {
+        return this._baseNamespaceField;
+    }
+}
+
+private string _tableNameField;
+
+/// <summary>
+/// Access the tableName parameter of the template.
+/// </summary>
+private string tableName
+{
+    get
+    {
+        return this._tableNameField;
+    }
+}
+
+private global::JqGridCodeGenerator.ViewModel.Column _primaryKeyColumnField;
+
+/// <summary>
+/// Access the primaryKeyColumn parameter of the template.
+/// </summary>
+private global::JqGridCodeGenerator.ViewModel.Column primaryKeyColumn
+{
+    get
+    {
+        return this._primaryKeyColumnField;
+    }
+}
+
+private global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column> _columnsField;
+
+/// <summary>
+/// Access the columns parameter of the template.
+/// </summary>
+private global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column> columns
+{
+    get
+    {
+        return this._columnsField;
+    }
+}
+
+
+/// <summary>
+/// Initialize the template
+/// </summary>
+public virtual void Initialize()
+{
+    if ((this.Errors.HasErrors == false))
+    {
+bool baseNameValueAcquired = false;
+if (this.Session.ContainsKey("baseName"))
+{
+    this._baseNameField = ((string)(this.Session["baseName"]));
+    baseNameValueAcquired = true;
+}
+if ((baseNameValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseName");
+    if ((data != null))
+    {
+        this._baseNameField = ((string)(data));
+    }
+}
+bool baseNamespaceValueAcquired = false;
+if (this.Session.ContainsKey("baseNamespace"))
+{
+    this._baseNamespaceField = ((string)(this.Session["baseNamespace"]));
+    baseNamespaceValueAcquired = true;
+}
+if ((baseNamespaceValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("baseNamespace");
+    if ((data != null))
+    {
+        this._baseNamespaceField = ((string)(data));
+    }
+}
+bool tableNameValueAcquired = false;
+if (this.Session.ContainsKey("tableName"))
+{
+    this._tableNameField = ((string)(this.Session["tableName"]));
+    tableNameValueAcquired = true;
+}
+if ((tableNameValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("tableName");
+    if ((data != null))
+    {
+        this._tableNameField = ((string)(data));
+    }
+}
+bool primaryKeyColumnValueAcquired = false;
+if (this.Session.ContainsKey("primaryKeyColumn"))
+{
+    this._primaryKeyColumnField = ((global::JqGridCodeGenerator.ViewModel.Column)(this.Session["primaryKeyColumn"]));
+    primaryKeyColumnValueAcquired = true;
+}
+if ((primaryKeyColumnValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("primaryKeyColumn");
+    if ((data != null))
+    {
+        this._primaryKeyColumnField = ((global::JqGridCodeGenerator.ViewModel.Column)(data));
+    }
+}
+bool columnsValueAcquired = false;
+if (this.Session.ContainsKey("columns"))
+{
+    this._columnsField = ((global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>)(this.Session["columns"]));
+    columnsValueAcquired = true;
+}
+if ((columnsValueAcquired == false))
+{
+    object data = global::System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("columns");
+    if ((data != null))
+    {
+        this._columnsField = ((global::System.Collections.Generic.List<JqGridCodeGenerator.ViewModel.Column>)(data));
+    }
+}
+
+
+    }
+}
+
+
+        
+        #line default
+        #line hidden
     }
     
     #line default

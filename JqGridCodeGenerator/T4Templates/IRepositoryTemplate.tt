@@ -7,7 +7,6 @@
 <#@ parameter type="System.String" name="baseNamespace" #>
 <#@ parameter type="System.String" name="tableName" #>
 using GenericCSR.Repository;
-using <#= baseNamespace#>.Models;
 
 namespace <#= baseNamespace #>.Repositories.Interfaces
 {

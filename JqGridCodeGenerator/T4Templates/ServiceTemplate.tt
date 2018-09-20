@@ -9,7 +9,6 @@
 using AutoMapper;
 using GenericCSR.Service;
 using <#= baseNamespace#>.Models;
-using <#= baseNamespace#>.Repositories;
 using <#= baseNamespace#>.Repositories.Interfaces;
 using <#= baseNamespace#>.Services.CRUD.Interfaces;
 

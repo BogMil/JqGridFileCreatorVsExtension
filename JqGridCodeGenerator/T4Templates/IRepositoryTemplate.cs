@@ -28,30 +28,23 @@ namespace JqGridCodeGenerator.T4Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using GenericCSR.Repository;\r\nusing ");
+            this.Write("using GenericCSR.Repository;\r\n\r\nnamespace ");
             
-            #line 10 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(".Models;\r\n\r\nnamespace ");
-            
-            #line 12 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
+            #line 11 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseNamespace));
             
             #line default
             #line hidden
             this.Write(".Repositories.Interfaces\r\n{\r\n\tpublic interface I");
             
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
+            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(baseName));
             
             #line default
             #line hidden
             this.Write("Repository : IGenericRepository<");
             
-            #line 14 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
+            #line 13 "C:\Users\DusanRazvoj\Source\Repos\JqGridFileCreatorVsExtension\JqGridCodeGenerator\T4Templates\IRepositoryTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default

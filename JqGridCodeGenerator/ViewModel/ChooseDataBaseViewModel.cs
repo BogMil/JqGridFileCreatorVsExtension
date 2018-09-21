@@ -1,28 +1,29 @@
 ﻿//DUSANRAZVOJ-PC\SQLEXPRESS
-using JqGridCodeGenerator.Commands;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Linq;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.IO;
 using EnvDTE;
+using JqGridCodeGenerator.Commands;
 using JqGridCodeGenerator.T4Templates;
-
-using System.Runtime.InteropServices;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using System.Windows;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextTemplating;
+using Constants = EnvDTE.Constants;
 
 namespace JqGridCodeGenerator.ViewModel
 {
-    class ChooseDataBaseViewModel : INotifyPropertyChanged
+    public class ChooseDataBaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -35,7 +36,7 @@ namespace JqGridCodeGenerator.ViewModel
 
         public List<Column> Columns = new List<Column>();
 
-        private void onPropertyChanged(string property)
+        private void OnPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
@@ -45,254 +46,275 @@ namespace JqGridCodeGenerator.ViewModel
         public ChooseDataBaseViewModel()
         {
             PopulateComboBoxWithDatabasesCommand = new CustomCommand(Populate, CanExecuteCommand);
-            HandleCredentialsFormVisibilityCommand = new CustomCommand(HandleCredentialsFormVisibility, CanExecuteCommand);
-            HandleControllersComboBoxVisibilityCommand = new CustomCommand(HandleControllersComboBoxVisibility, CanExecuteCommand);
-            HandleRepositoriesComboBoxVisibilityCommand = new CustomCommand(HandleRepositoriesComboBoxVisibility, CanExecuteCommand);
+            HandleCredentialsFormVisibilityCommand =
+                new CustomCommand(HandleCredentialsFormVisibility, CanExecuteCommand);
+            HandleControllersComboBoxVisibilityCommand =
+                new CustomCommand(HandleControllersComboBoxVisibility, CanExecuteCommand);
+            HandleRepositoriesComboBoxVisibilityCommand =
+                new CustomCommand(HandleRepositoriesComboBoxVisibility, CanExecuteCommand);
             PopulateComboBoxWithTables = new CustomCommand(PopulateWithTables, CanExecuteCommand);
             CreateFilesCommand = new CustomCommand(CreateFiles, CanExecuteCommand);
 
             AddedFolders = new List<string>();
             GetControllers();
-            GetServices(); 
+            GetServices();
             GetRepositories();
 
-            string message = "Kreirani su sledeci folderi koji su bitni za rad GenericCSR framework-a:\n-----------------------\n";
+            var message =
+                "Kreirani su sledeci folderi koji su bitni za rad GenericCSR framework-a:\n-----------------------\n";
             foreach (var addedFolder in AddedFolders)
-                message += addedFolder+"\n-----------------------\n";
+                message += addedFolder + "\n-----------------------\n";
 
-            if(AddedFolders.Count>0)
-                MessageBox.Show(message,"Informacija");
+            if (AddedFolders.Count > 0)
+                MessageBox.Show(message, "Informacija");
 
-            IsUseBaseControllerEnabled = BaseControllers.Count>0;
-            IsUseBaseRepositoryEnabled = BaseRepositories.Count>0;
+            IsUseBaseControllerEnabled = BaseControllers.Count > 0;
+            IsUseBaseRepositoryEnabled = BaseRepositories.Count > 0;
         }
 
         private Column _primaryKeyColumn;
-        private List<TypeWithNamespace> _controllersWithNamespaces = null;
-        private List<TypeWithNamespace> _repositoriesWithNamespaces = null;
-        private string _baseControllerNamespace = null;
-        private string _baseRepositoryNamespace = null;
+        private List<TypeWithNamespace> _controllersWithNamespaces;
+        private List<TypeWithNamespace> _repositoriesWithNamespaces;
+        private string _baseControllerNamespace;
+        private string _baseRepositoryNamespace;
 
         private CollectionView _databaseEntries;
+
         public CollectionView DatabaseEntries
         {
-            get { return _databaseEntries; }
+            get => _databaseEntries;
             set
             {
                 _databaseEntries = value;
-                onPropertyChanged("DatabaseEntries");
+                OnPropertyChanged("DatabaseEntries");
             }
         }
 
         private string _databaseEntry;
+
         public string DatabaseEntry
         {
-            get { return _databaseEntry; }
+            get => _databaseEntry;
             set
             {
                 if (_databaseEntry == value) return;
                 _databaseEntry = value;
-                onPropertyChanged("DatabaseEntry");
+                OnPropertyChanged("DatabaseEntry");
                 PopulateComboBoxWithTables.Execute(null);
             }
         }
 
         private CollectionView _tables;
+
         public CollectionView Tables
         {
-            get { return _tables; }
+            get => _tables;
             set
             {
                 _tables = value;
-                onPropertyChanged("Tables");
+                OnPropertyChanged("Tables");
             }
         }
 
         private string _table;
+
         public string Table
         {
-            get { return _table; }
+            get => _table;
             set
             {
                 if (_table == value) return;
                 _table = value;
                 GetColumns();
-                onPropertyChanged("Table");
+                OnPropertyChanged("Table");
             }
         }
 
         private CollectionView _baseControllers;
+
         public CollectionView BaseControllers
         {
-            get { return _baseControllers; }
+            get => _baseControllers;
             set
             {
                 _baseControllers = value;
-                onPropertyChanged("BaseControllers");
+                OnPropertyChanged("BaseControllers");
             }
         }
 
         private string _baseController;
+
         public string BaseController
         {
-            get { return _baseController; }
+            get => _baseController;
             set
             {
                 if (_baseController == value) return;
                 _baseController = value;
                 _baseControllerNamespace = _controllersWithNamespaces.GetNamespaceForType(value);
-                onPropertyChanged("BaseController");
+                OnPropertyChanged("BaseController");
             }
         }
 
         private CollectionView _baseRepositories;
+
         public CollectionView BaseRepositories
         {
-            get { return _baseRepositories; }
+            get => _baseRepositories;
             set
             {
                 _baseRepositories = value;
-                onPropertyChanged("BaseRepositories");
+                OnPropertyChanged("BaseRepositories");
             }
         }
 
         private string _baseRepository;
+
         public string BaseRepository
         {
-            get { return _baseRepository; }
+            get => _baseRepository;
             set
             {
                 if (_baseRepository == value) return;
                 _baseRepository = value;
                 _baseRepositoryNamespace = _repositoriesWithNamespaces.GetNamespaceForType(value);
-                onPropertyChanged("BaseRepository");
+                OnPropertyChanged("BaseRepository");
             }
         }
 
-        private string _SqlServerName = "Enter Sql Server Name";
+        private string _sqlServerName = "Enter Sql Server Name";
+
         public string SqlServerName
         {
-            get { return _SqlServerName; }
+            get => _sqlServerName;
             set
             {
-                if (value != _SqlServerName)
+                if (value != _sqlServerName)
                 {
-                    _SqlServerName = value;
-                    onPropertyChanged("SqlServerName");
+                    _sqlServerName = value;
+                    OnPropertyChanged("SqlServerName");
                 }
             }
         }
 
-        private string _Username = "Enter username";
+        private string _username = "Enter username";
+
         public string Username
         {
-            get { return _Username; }
+            get => _username;
             set
             {
-                if (value != _Username)
+                if (value != _username)
                 {
-                    _Username = value;
-                    onPropertyChanged("Username");
+                    _username = value;
+                    OnPropertyChanged("Username");
                 }
             }
         }
 
-        private string _Password = "Enter password";
+        private string _password = "Enter password";
+
         public string Password
         {
-            get { return _Password; }
+            get => _password;
             set
             {
-                if (value != _Password)
+                if (value != _password)
                 {
-                    _Password = value;
-                    onPropertyChanged("Password");
+                    _password = value;
+                    OnPropertyChanged("Password");
                 }
             }
         }
 
-        private string _baseName="BaseName";
+        private string _baseName = "BaseName";
+
         public string BaseName
         {
-            get { return _baseName; }
+            get => _baseName;
             set
             {
                 if (value != _baseName)
                 {
                     _baseName = value;
-                    onPropertyChanged("BaseName");
+                    OnPropertyChanged("BaseName");
                 }
             }
         }
 
-        private bool _UseWindowsIdentity = false;
+        private bool _useWindowsIdentity;
+
         public bool UseWindowsIdentity
         {
-            get { return _UseWindowsIdentity; }
+            get => _useWindowsIdentity;
             set
             {
-                if (value != _UseWindowsIdentity)
+                if (value != _useWindowsIdentity)
                 {
-                    _UseWindowsIdentity = value;
-                    onPropertyChanged("UseWindowsIdentity");
+                    _useWindowsIdentity = value;
+                    OnPropertyChanged("UseWindowsIdentity");
                     HandleCredentialsFormVisibilityCommand.Execute(null);
                 }
             }
         }
 
-        private bool _UseBaseController = false;
+        private bool _useBaseController;
+
         public bool UseBaseController
         {
-            get { return _UseBaseController; }
+            get => _useBaseController;
             set
             {
-                if (value != _UseBaseController)
+                if (value != _useBaseController)
                 {
-                    _UseBaseController = value;
-                    onPropertyChanged("UseBaseController");
+                    _useBaseController = value;
+                    OnPropertyChanged("UseBaseController");
                     HandleControllersComboBoxVisibilityCommand.Execute(null);
                 }
             }
         }
 
-        private bool _IsUseBaseControllerEnabled = false;
+        private bool _isUseBaseControllerEnabled;
+
         public bool IsUseBaseControllerEnabled
         {
-            get { return _IsUseBaseControllerEnabled; }
+            get => _isUseBaseControllerEnabled;
             set
             {
-                if (value != _IsUseBaseControllerEnabled)
+                if (value != _isUseBaseControllerEnabled)
                 {
-                    _IsUseBaseControllerEnabled = value;
-                    onPropertyChanged("IsUseBaseControllerEnabled");
+                    _isUseBaseControllerEnabled = value;
+                    OnPropertyChanged("IsUseBaseControllerEnabled");
                 }
             }
         }
 
-        private bool _IsUseBaseRepositoryEnabled = false;
+        private bool _isUseBaseRepositoryEnabled;
+
         public bool IsUseBaseRepositoryEnabled
         {
-            get { return _IsUseBaseRepositoryEnabled; }
+            get => _isUseBaseRepositoryEnabled;
             set
             {
-                if (value != _IsUseBaseRepositoryEnabled)
+                if (value != _isUseBaseRepositoryEnabled)
                 {
-                    _IsUseBaseRepositoryEnabled = value;
-                    onPropertyChanged("IsUseBaseRepositoryEnabled");
+                    _isUseBaseRepositoryEnabled = value;
+                    OnPropertyChanged("IsUseBaseRepositoryEnabled");
                 }
             }
         }
 
-        private bool _UseBaseRepository = false;
+        private bool _useBaseRepository;
+
         public bool UseBaseRepository
         {
-            get { return _UseBaseRepository; }
+            get => _useBaseRepository;
             set
             {
-                if (value != _UseBaseRepository)
+                if (value != _useBaseRepository)
                 {
-                    _UseBaseRepository = value;
-                    onPropertyChanged("UseBaseService");
+                    _useBaseRepository = value;
+                    OnPropertyChanged("UseBaseService");
                     HandleRepositoriesComboBoxVisibilityCommand.Execute(null);
                 }
             }
@@ -305,65 +327,63 @@ namespace JqGridCodeGenerator.ViewModel
 
         public void Populate(object parameter)
         {
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
+            var list = new List<ComboBoxItem>();
 
-            using (SqlConnection con = new SqlConnection(CreateConnectionString()))
+            using (var con = new SqlConnection(CreateConnectionString()))
             {
                 con.Open();
 
-                using (SqlCommand cmd = new SqlCommand("SELECT name from sys.databases", con))
+                using (var cmd = new SqlCommand("SELECT name from sys.databases", con))
                 {
                     using (IDataReader dr = cmd.ExecuteReader())
                     {
-                        while (dr.Read())
-                        {
-                            list.Add(new ComboBoxItem(dr[0].ToString()));
-                        }
+                        while (dr.Read()) list.Add(new ComboBoxItem(dr[0].ToString()));
                         DatabaseEntries = new CollectionView(list);
                     }
                 }
+
                 con.Close();
             }
         }
 
         public void PopulateWithTables(object parameter)
         {
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
+            var list = new List<ComboBoxItem>();
             var conString = CreateConnectionString();
 
-            using (SqlConnection con = new SqlConnection(conString))
+            using (var con = new SqlConnection(conString))
             {
                 con.Open();
 
-                using (SqlCommand cmd = new SqlCommand("SELECT TABLE_NAME FROM "+DatabaseEntry+".INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'", con))
+                using (var cmd =
+                    new SqlCommand(
+                        "SELECT TABLE_NAME FROM " + DatabaseEntry +
+                        ".INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'", con))
                 {
                     using (IDataReader dr = cmd.ExecuteReader())
                     {
-                        while (dr.Read())
-                        {
-                            list.Add(new ComboBoxItem(dr[0].ToString()));
-                        }
+                        while (dr.Read()) list.Add(new ComboBoxItem(dr[0].ToString()));
                         Tables = new CollectionView(list);
                     }
                 }
+
                 con.Close();
             }
         }
 
         public void GetColumns()
         {
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
-            using (SqlConnection conn = new SqlConnection(CreateConnectionString()))
+            using (var conn = new SqlConnection(CreateConnectionString()))
             {
                 conn.Open();
-                String[] columnRestrictions = new String[4];
+                var columnRestrictions = new string[4];
                 columnRestrictions[0] = DatabaseEntry;
                 columnRestrictions[2] = Table;
 
-                DataTable shemaTable = conn.GetSchema("Columns", columnRestrictions);
+                var shemaTable = conn.GetSchema("Columns", columnRestrictions);
 
                 var columns = (from info in shemaTable.AsEnumerable()
-                    select new Column()
+                    select new Column
                     {
                         Name = info["COLUMN_NAME"].ToString(),
                         Type = info["DATA_TYPE"].ToString(),
@@ -374,11 +394,12 @@ namespace JqGridCodeGenerator.ViewModel
                 foreach (var column in columns)
                     Columns.Add(column);
 
-                columnRestrictions[3] = "PK_"+Table;
+                columnRestrictions[3] = "PK_" + Table;
 
                 shemaTable = conn.GetSchema("IndexColumns", columnRestrictions);
                 var primaryKey = (from info in shemaTable.AsEnumerable()
-                    select new{
+                    select new
+                    {
                         ColumnName = info["COLUMN_NAME"].ToString()
                     }).ToList().FirstOrDefault();
 
@@ -387,13 +408,14 @@ namespace JqGridCodeGenerator.ViewModel
                     foreach (var column in columns)
                         if (column.Name == primaryKey.ColumnName)
                             column.IsPrimaryKey = true;
-                        
+
                     _primaryKeyColumn = columns.GetPrimaryKeyColumn();
                 }
                 else
                 {
                     _primaryKeyColumn = null;
-                    MessageBox.Show("Tabela nema primarni kljuc. Morate izabrati tabelu koja ima primarni kljuc", "Informacija");
+                    MessageBox.Show("Tabela nema primarni kljuc. Morate izabrati tabelu koja ima primarni kljuc",
+                        "Informacija");
                 }
 
                 conn.Close();
@@ -402,7 +424,7 @@ namespace JqGridCodeGenerator.ViewModel
 
         private string CreateConnectionString()
         {
-            SqlConnectionStringBuilder connBuilder = new SqlConnectionStringBuilder
+            var connBuilder = new SqlConnectionStringBuilder
             {
                 DataSource = SqlServerName
             };
@@ -416,6 +438,7 @@ namespace JqGridCodeGenerator.ViewModel
                 connBuilder.UserID = Username;
                 connBuilder.Password = Password;
             }
+
             if (DatabaseEntry != null)
                 connBuilder.InitialCatalog = DatabaseEntry;
 
@@ -424,37 +447,23 @@ namespace JqGridCodeGenerator.ViewModel
 
         private void HandleCredentialsFormVisibility(object obj)
         {
-            var CredentialFormStackPanel = obj as StackPanel;
-
-            if (UseWindowsIdentity == true)
-                CredentialFormStackPanel.IsEnabled= false;
-            else
-                CredentialFormStackPanel.IsEnabled = true;
+            if (obj is StackPanel credentialFormStackPanel)
+                credentialFormStackPanel.IsEnabled = UseWindowsIdentity != true;
         }
 
         private void HandleControllersComboBoxVisibility(object obj)
         {
-            var ControllersComboBox = obj as ComboBox;
-
-            if (UseBaseController != true)
-                ControllersComboBox.IsEnabled = false;
-            else
-                ControllersComboBox.IsEnabled = true;
+            if (obj is ComboBox controllersComboBox) controllersComboBox.IsEnabled = UseBaseController;
         }
 
         private void HandleRepositoriesComboBoxVisibility(object obj)
         {
-            var ServicesComboBox = obj as ComboBox;
-
-            if (UseBaseRepository != true)
-                ServicesComboBox.IsEnabled = false;
-            else
-                ServicesComboBox.IsEnabled = true;
+            if (obj is ComboBox servicesComboBox) servicesComboBox.IsEnabled = UseBaseRepository;
         }
 
         public void CreateFiles(object parametar)
         {
-            if (Table == String.Empty || Table == null)
+            if (string.IsNullOrEmpty(Table))
             {
                 MessageBox.Show("Изабери табелу", "Informacija");
                 return;
@@ -462,16 +471,18 @@ namespace JqGridCodeGenerator.ViewModel
 
             if (_primaryKeyColumn == null)
             {
-                MessageBox.Show("Tabela nema primarni kljuc. Nije moguce koristiti GenericCRS za tabele koje nemaju primarni kljuc", "Informacija");
+                MessageBox.Show(
+                    "Tabela nema primarni kljuc. Nije moguce koristiti GenericCRS za tabele koje nemaju primarni kljuc",
+                    "Informacija");
                 return;
             }
 
             var rootFolder = GetRootFolder();
 
-            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
             var activeProject = GetActiveProject(dte);
 
-            CreateIServiceFile(activeProject,rootFolder);
+            CreateIServiceFile(activeProject, rootFolder);
             CreateServiceFile(activeProject, rootFolder);
             CreateIRepositoryFile(activeProject, rootFolder);
             CreateRepositoryFile(activeProject, rootFolder);
@@ -481,16 +492,17 @@ namespace JqGridCodeGenerator.ViewModel
             JqGridCodeGeneratorWindow.Instance.Close();
         }
 
-        private void CreateIServiceFile(Project activeProject,DirectoryInfo rootFolder)
+        private void CreateIServiceFile(Project activeProject, DirectoryInfo rootFolder)
         {
-            var filePath = rootFolder.FullName + "\\Services\\CRUD\\Interfaces\\I"+BaseName+"Service.cs";
+            var filePath = rootFolder.FullName + "\\Services\\CRUD\\Interfaces\\I" + BaseName + "Service.cs";
             var file = File.Create(filePath);
             file.Close();
-            IServiceTemplate page = new IServiceTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new IServiceTemplate
             {
-                ["baseName"] = BaseName,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder)
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName, ["baseNamespace"] = GetBaseNamespace(rootFolder)
+                }
             };
             page.Initialize();
 
@@ -499,8 +511,8 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private void CreateIRepositoryFile(Project activeProject, DirectoryInfo rootFolder)
@@ -508,12 +520,14 @@ namespace JqGridCodeGenerator.ViewModel
             var filePath = rootFolder.FullName + "\\Repositories\\Interfaces\\I" + BaseName + "Repository.cs";
             var file = File.Create(filePath);
             file.Close();
-            IRepositoryTemplate page = new IRepositoryTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new IRepositoryTemplate
             {
-                ["baseName"] = BaseName,
-                ["tableName"] = Table,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder)
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName,
+                    ["tableName"] = Table,
+                    ["baseNamespace"] = GetBaseNamespace(rootFolder)
+                }
             };
             page.Initialize();
 
@@ -522,8 +536,8 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private void CreateRepositoryFile(Project activeProject, DirectoryInfo rootFolder)
@@ -531,16 +545,18 @@ namespace JqGridCodeGenerator.ViewModel
             var filePath = rootFolder.FullName + "\\Repositories\\" + BaseName + "Repository.cs";
             var file = File.Create(filePath);
             file.Close();
-            RepositoryTemplate page = new RepositoryTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new RepositoryTemplate
             {
-                ["baseName"] = BaseName,
-                ["tableName"] = Table,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder),
-                ["primaryKeyName"] = _primaryKeyColumn.Name,
-                ["useBaseRepository"] = _UseBaseRepository,
-                ["baseRepositoryNamespace"] = _baseRepositoryNamespace,
-                ["baseRepositoryName"] = BaseRepository
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName,
+                    ["tableName"] = Table,
+                    ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                    ["primaryKeyName"] = _primaryKeyColumn.Name,
+                    ["useBaseRepository"] = _useBaseRepository,
+                    ["baseRepositoryNamespace"] = _baseRepositoryNamespace,
+                    ["baseRepositoryName"] = BaseRepository
+                }
             };
             page.Initialize();
 
@@ -549,23 +565,25 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private void CreateControllerFile(Project activeProject, DirectoryInfo rootFolder)
         {
-            var filePath = rootFolder.FullName + "\\Controllers\\"+ BaseName + "Controller.cs";
+            var filePath = rootFolder.FullName + "\\Controllers\\" + BaseName + "Controller.cs";
             var file = File.Create(filePath);
             file.Close();
-            ControllerTemplate page = new ControllerTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new ControllerTemplate
             {
-                ["baseName"] = BaseName,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder),
-                ["useBaseController"] = _UseBaseController,
-                ["baseControllerNamespace"] = _baseControllerNamespace,
-                ["baseControllerName"] = BaseController
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName,
+                    ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                    ["useBaseController"] = _useBaseController,
+                    ["baseControllerNamespace"] = _baseControllerNamespace,
+                    ["baseControllerName"] = BaseController
+                }
             };
             page.Initialize();
 
@@ -574,8 +592,8 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private void CreateModelFile(Project activeProject, DirectoryInfo rootFolder)
@@ -583,15 +601,18 @@ namespace JqGridCodeGenerator.ViewModel
             var filePath = rootFolder.FullName + "\\Models\\" + BaseName + ".cs";
             var file = File.Create(filePath);
             file.Close();
-            ModelTemplate page = new ModelTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new ModelTemplate
             {
-                ["baseName"] = BaseName,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder),
-                ["tableName"] = Table,
-                ["primaryKeyColumn"] = _primaryKeyColumn,
-                ["columns"] = Columns
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName,
+                    ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                    ["tableName"] = Table,
+                    ["primaryKeyColumn"] = _primaryKeyColumn,
+                    ["columns"] = Columns
+                }
             };
+
             page.Initialize();
 
             var pageContent = page.TransformText();
@@ -599,8 +620,8 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private void CreateServiceFile(Project activeProject, DirectoryInfo rootFolder)
@@ -608,12 +629,14 @@ namespace JqGridCodeGenerator.ViewModel
             var filePath = rootFolder.FullName + "\\Services\\CRUD\\" + BaseName + "Service.cs";
             var file = File.Create(filePath);
             file.Close();
-            ServiceTemplate page = new ServiceTemplate();
-            page.Session = new TextTemplatingSession
+            var page = new ServiceTemplate
             {
-                ["baseName"] = BaseName,
-                ["baseNamespace"] = GetBaseNamespace(rootFolder),
-                ["tableName"] = Table
+                Session = new TextTemplatingSession
+                {
+                    ["baseName"] = BaseName,
+                    ["baseNamespace"] = GetBaseNamespace(rootFolder),
+                    ["tableName"] = Table
+                }
             };
             page.Initialize();
 
@@ -622,13 +645,15 @@ namespace JqGridCodeGenerator.ViewModel
 
             activeProject.ProjectItems.AddFromFile(filePath);
 
-            ItemOperations ItemOp = activeProject.DTE.ItemOperations;
-            ItemOp.OpenFile(filePath, EnvDTE.Constants.vsViewKindTextView);
+            var itemOp = activeProject.DTE.ItemOperations;
+            itemOp.OpenFile(filePath, Constants.vsViewKindTextView);
         }
 
         private string GetBaseNamespace(DirectoryInfo rootFolder)
         {
-            if (IsRootFolderInArea(rootFolder))
+            if (!IsRootFolderInArea(rootFolder)) return rootFolder.Name;
+            if (rootFolder.Parent == null) return rootFolder.Name;
+            if (rootFolder.Parent.Parent != null)
                 return rootFolder.Parent.Parent.Name + "." + rootFolder.Parent.Name + "." + rootFolder.Name;
             return rootFolder.Name;
         }
@@ -637,28 +662,21 @@ namespace JqGridCodeGenerator.ViewModel
         {
             hierarchy = null;
             itemid = VSConstants.VSITEMID_NIL;
-            int hr = VSConstants.S_OK;
 
             var monitorSelection = Package.GetGlobalService(typeof(SVsShellMonitorSelection)) as IVsMonitorSelection;
             var solution = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;
-            if (monitorSelection == null || solution == null)
-            {
-                return false;
-            }
+            if (monitorSelection == null || solution == null) return false;
 
-            IVsMultiItemSelect multiItemSelect = null;
-            IntPtr hierarchyPtr = IntPtr.Zero;
-            IntPtr selectionContainerPtr = IntPtr.Zero;
+            var hierarchyPtr = IntPtr.Zero;
+            var selectionContainerPtr = IntPtr.Zero;
 
             try
             {
-                hr = monitorSelection.GetCurrentSelection(out hierarchyPtr, out itemid, out multiItemSelect, out selectionContainerPtr);
+                var hr = monitorSelection.GetCurrentSelection(out hierarchyPtr, out itemid, out var multiItemSelect,
+                    out selectionContainerPtr);
 
                 if (ErrorHandler.Failed(hr) || hierarchyPtr == IntPtr.Zero || itemid == VSConstants.VSITEMID_NIL)
-                {
-                    // there is no selection
                     return false;
-                }
 
                 // multiple items are selected
                 if (multiItemSelect != null) return false;
@@ -670,50 +688,36 @@ namespace JqGridCodeGenerator.ViewModel
                 hierarchy = Marshal.GetObjectForIUnknown(hierarchyPtr) as IVsHierarchy;
                 if (hierarchy == null) return false;
 
-                Guid guidProjectID = Guid.Empty;
-
-                if (ErrorHandler.Failed(solution.GetGuidOfProject(hierarchy, out guidProjectID)))
-                {
-                    return false; // hierarchy is not a project inside the Solution if it does not have a ProjectID Guid
-                }
+                return !ErrorHandler.Failed(solution.GetGuidOfProject(hierarchy, out _));
 
                 // if we got this far then there is a single project item selected
-                return true;
             }
             finally
             {
-                if (selectionContainerPtr != IntPtr.Zero)
-                {
-                    Marshal.Release(selectionContainerPtr);
-                }
+                if (selectionContainerPtr != IntPtr.Zero) Marshal.Release(selectionContainerPtr);
 
-                if (hierarchyPtr != IntPtr.Zero)
-                {
-                    Marshal.Release(hierarchyPtr);
-                }
+                if (hierarchyPtr != IntPtr.Zero) Marshal.Release(hierarchyPtr);
             }
         }
 
         public Project GetActiveProject(DTE dte)
         {
-            var activeProjects = dte.ActiveSolutionProjects as Array;
-            return (Project)activeProjects.GetValue(0);
+            if (dte.ActiveSolutionProjects is Array activeProjects) return (Project) activeProjects.GetValue(0);
+            throw new Exception("GetActiveProject is null");
         }
 
         public void GetControllers()
         {
-            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
             var activeProject = GetActiveProject(dte);
-            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
 
-            List<TypeWithNamespace> listOfTypesWithNamespaces = new List<TypeWithNamespace>();
+            var listOfTypesWithNamespaces = new List<TypeWithNamespace>();
             var controllerFolder = activeProject.GetProjectItemByName("Controllers");
             foreach (ProjectItem controller in controllerFolder.ProjectItems)
-            {
-                listOfTypesWithNamespaces= PopulateListWithTypesThatInheritBaseType(controller,listOfTypesWithNamespaces/*, "GenericController"*/);
-            }
+                listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(controller,
+                    listOfTypesWithNamespaces /*, "GenericController"*/);
 
             if (IsRootFolderInArea(rootFolder))
             {
@@ -721,59 +725,61 @@ namespace JqGridCodeGenerator.ViewModel
                 var areasRootFolder = areasFolder.GetProjectItemByName(rootFolder.Name);
                 var areasControllerFolder = areasRootFolder.GetProjectItemByName("Controllers");
                 foreach (ProjectItem controller in areasControllerFolder.ProjectItems)
-                {
-                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(controller, listOfTypesWithNamespaces/*,"GenericController"*/);
-                }
+                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(controller,
+                        listOfTypesWithNamespaces /*,"GenericController"*/);
             }
 
             var listOfControllerName = listOfTypesWithNamespaces.Select(x => x.Name).ToList();
             var comboBoxList = new List<ComboBoxItem>();
 
-            foreach(var controllerName in listOfControllerName)
-            {
-                comboBoxList.Add(new ComboBoxItem(controllerName));
-            }
+            foreach (var controllerName in listOfControllerName) comboBoxList.Add(new ComboBoxItem(controllerName));
             _controllersWithNamespaces = listOfTypesWithNamespaces;
             BaseControllers = new CollectionView(comboBoxList);
         }
 
         public void GetServices()
         {
-            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
             var activeProject = GetActiveProject(dte);
-            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
 
-            List<ComboBoxItem> list = new List<ComboBoxItem>();
             var servicesFolder = activeProject.GetProjectItemByName("Services");
-            
+
             if (servicesFolder == null)
             {
-                servicesFolder=activeProject.ProjectItems.AddFolder("Services");
+                servicesFolder = activeProject.ProjectItems.AddFolder("Services");
                 var crudFolder = servicesFolder.ProjectItems.AddFolder("CRUD");
                 crudFolder.ProjectItems.AddFolder("Interfaces");
 
-                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services");
-                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
-                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
+                if (rootFolder.Parent?.Parent != null)
+                {
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
+                }
             }
             else
             {
                 var crudFolder = servicesFolder.GetProjectItemByName("CRUD");
-                if (crudFolder==null)
+                if (crudFolder == null)
                 {
-                    crudFolder=servicesFolder.ProjectItems.AddFolder("CRUD");
+                    crudFolder = servicesFolder.ProjectItems.AddFolder("CRUD");
                     crudFolder.ProjectItems.AddFolder("Interfaces");
 
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
+                    if (rootFolder.Parent?.Parent != null)
+                    {
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD");
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
+                    }
                 }
+
                 var interfacesFolder = crudFolder.GetProjectItemByName("Interfaces");
                 if (interfacesFolder == null)
                 {
                     crudFolder.ProjectItems.AddFolder("Interfaces");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
+                    if (rootFolder.Parent?.Parent != null)
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Services\\CRUD\\Interfaces");
                 }
             }
 
@@ -781,56 +787,68 @@ namespace JqGridCodeGenerator.ViewModel
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var rootFolderInAreas = areasFolder.GetProjectItemByName(rootFolder.Name);
-                var ServicesFolderInRoot = rootFolderInAreas.GetProjectItemByName("Services");
-                if (ServicesFolderInRoot == null)
+                var servicesFolderInRoot = rootFolderInAreas.GetProjectItemByName("Services");
+                if (servicesFolderInRoot == null)
                 {
-                    ServicesFolderInRoot=rootFolderInAreas.ProjectItems.AddFolder("Services");
-                    var crudFolder = ServicesFolderInRoot.ProjectItems.AddFolder("CRUD");
+                    servicesFolderInRoot = rootFolderInAreas.ProjectItems.AddFolder("Services");
+                    var crudFolder = servicesFolderInRoot.ProjectItems.AddFolder("CRUD");
                     crudFolder.ProjectItems.AddFolder("Interfaces");
 
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Services");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Services\\CRUD");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
+                    if (rootFolder.Parent?.Parent == null) return;
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                     rootFolder.Name + "\\Services");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                     rootFolder.Name + "\\Services\\CRUD");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                     rootFolder.Name + "\\Services\\CRUD\\Interfaces");
                 }
                 else
                 {
-                    var crudFolder = ServicesFolderInRoot.GetProjectItemByName("CRUD");
+                    var crudFolder = servicesFolderInRoot.GetProjectItemByName("CRUD");
                     if (crudFolder == null)
                     {
-                        crudFolder = ServicesFolderInRoot.ProjectItems.AddFolder("CRUD");
+                        crudFolder = servicesFolderInRoot.ProjectItems.AddFolder("CRUD");
                         crudFolder.ProjectItems.AddFolder("Interfaces");
 
-                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD");
-                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
+                        if (rootFolder.Parent?.Parent != null)
+                        {
+                            AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                             rootFolder.Name + "\\Services\\CRUD");
+                            AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                             rootFolder.Name + "\\Services\\CRUD\\Interfaces");
+                        }
                     }
+
                     var interfacesFolder = crudFolder.GetProjectItemByName("Interfaces");
-                    if (interfacesFolder == null)
-                    {
-                        crudFolder.ProjectItems.AddFolder("Interfaces");
+                    if (interfacesFolder != null) return;
+                    crudFolder.ProjectItems.AddFolder("Interfaces");
 
-                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Services\\CRUD\\Interfaces");
-                    }
+                    if (rootFolder.Parent?.Parent != null)
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                         rootFolder.Name + "\\Services\\CRUD\\Interfaces");
                 }
             }
         }
 
         public void GetRepositories()
         {
-            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
             var activeProject = GetActiveProject(dte);
-            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
 
             var rootFolder = GetRootFolder();
 
-            List<TypeWithNamespace> listOfTypesWithNamespaces = new List<TypeWithNamespace>();
+            var listOfTypesWithNamespaces = new List<TypeWithNamespace>();
             var repositoriesFolder = activeProject.GetProjectItemByName("Repositories");
 
             if (repositoriesFolder == null)
             {
-                repositoriesFolder=activeProject.ProjectItems.AddFolder("Repositories");
+                repositoriesFolder = activeProject.ProjectItems.AddFolder("Repositories");
                 repositoriesFolder.ProjectItems.AddFolder("Interfaces");
-                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories");
-                AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
+                if (rootFolder.Parent?.Parent != null)
+                {
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories");
+                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
+                }
             }
             else
             {
@@ -838,60 +856,63 @@ namespace JqGridCodeGenerator.ViewModel
                 if (interfacesFolder == null)
                 {
                     repositoriesFolder.ProjectItems.AddFolder("Interfaces");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
+                    if (rootFolder.Parent?.Parent != null)
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\Repositories\\Interfaces");
                 }
-               
+
                 foreach (ProjectItem repository in repositoriesFolder.ProjectItems)
-                {
-                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository, listOfTypesWithNamespaces/*, "GenericRepository"*/);
-                }
-               
+                    listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository,
+                        listOfTypesWithNamespaces /*, "GenericRepository"*/);
             }
 
             if (IsRootFolderInArea(rootFolder))
             {
                 var areasFolder = activeProject.GetProjectItemByName("Areas");
                 var rootFolderInAreas = areasFolder.GetProjectItemByName(rootFolder.Name);
-                var RepositoriesFolderInRoot = rootFolderInAreas.GetProjectItemByName("Repositories");
-                if (RepositoriesFolderInRoot == null)
+                var repositoriesFolderInRoot = rootFolderInAreas.GetProjectItemByName("Repositories");
+                if (repositoriesFolderInRoot == null)
                 {
-                    RepositoriesFolderInRoot= rootFolderInAreas.ProjectItems.AddFolder("Repositories");
-                    RepositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
+                    repositoriesFolderInRoot = rootFolderInAreas.ProjectItems.AddFolder("Repositories");
+                    repositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
 
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name+"\\"+rootFolder.Parent.Name+"\\"+rootFolder.Name + "\\Repositories");
-                    AddedFolders.Add(rootFolder.Parent.Parent.Name +"\\"+ rootFolder.Parent.Name + "\\" + rootFolder.Name+"\\Repositories\\Interfaces");
+                    if (rootFolder.Parent?.Parent != null)
+                    {
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                         rootFolder.Name + "\\Repositories");
+                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                         rootFolder.Name + "\\Repositories\\Interfaces");
+                    }
                 }
                 else
                 {
-                    var interfacesFolder = RepositoriesFolderInRoot.GetProjectItemByName("Interfaces");
+                    var interfacesFolder = repositoriesFolderInRoot.GetProjectItemByName("Interfaces");
                     if (interfacesFolder == null)
                     {
-                        RepositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
-                        AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" + rootFolder.Name + "\\Repositories\\Interfaces");
+                        repositoriesFolderInRoot.ProjectItems.AddFolder("Interfaces");
+                        if (rootFolder.Parent?.Parent != null)
+                            AddedFolders.Add(rootFolder.Parent.Parent.Name + "\\" + rootFolder.Parent.Name + "\\" +
+                                             rootFolder.Name + "\\Repositories\\Interfaces");
                     }
-                   
-                    foreach (ProjectItem repository in RepositoriesFolderInRoot.ProjectItems)
-                    {
-                        listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository, listOfTypesWithNamespaces/*, "GenericRepository"*/);
-                    }
+
+                    foreach (ProjectItem repository in repositoriesFolderInRoot.ProjectItems)
+                        listOfTypesWithNamespaces = PopulateListWithTypesThatInheritBaseType(repository,
+                            listOfTypesWithNamespaces /*, "GenericRepository"*/);
                 }
             }
 
             var listOfRepositoryName = listOfTypesWithNamespaces.Select(x => x.Name).ToList();
             var comboBoxList = new List<ComboBoxItem>();
 
-            foreach (var repositoryName in listOfRepositoryName)
-            {
-                comboBoxList.Add(new ComboBoxItem(repositoryName));
-            }
+            foreach (var repositoryName in listOfRepositoryName) comboBoxList.Add(new ComboBoxItem(repositoryName));
             _repositoriesWithNamespaces = listOfTypesWithNamespaces;
             BaseRepositories = new CollectionView(comboBoxList);
         }
 
 
-        public List<TypeWithNamespace> PopulateListWithTypesThatInheritBaseType(ProjectItem projectItem, List<TypeWithNamespace> list,string baseType=null)
+        public List<TypeWithNamespace> PopulateListWithTypesThatInheritBaseType(ProjectItem projectItem,
+            List<TypeWithNamespace> list, string baseType = null)
         {
-            if (!(projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile))
+            if (projectItem.Kind != Constants.vsProjectItemKindPhysicalFile)
                 return list;
             var codeModel = projectItem.FileCodeModel;
             foreach (var element in codeModel.CodeElements)
@@ -906,7 +927,10 @@ namespace JqGridCodeGenerator.ViewModel
                         continue;
                     if (baseType != null)
                     {
-                        foreach (var baseClass in (type as CodeType).Bases)
+                        var codeElements = (type as CodeType)?.Bases;
+
+                        if (codeElements == null) continue;
+                        foreach (var baseClass in codeElements)
                         {
                             if (!(baseClass is CodeClass bClass))
                                 continue;
@@ -919,25 +943,24 @@ namespace JqGridCodeGenerator.ViewModel
                         list.Add(new TypeWithNamespace(type.Name, type.Namespace.FullName));
                     }
                 }
-
             }
+
             return list;
         }
 
         public DirectoryInfo GetRootFolder()
         {
-            uint itemid = VSConstants.VSITEMID_NIL;
-            if (!IsSingleProjectItemSelection(out IVsHierarchy hierarchy, out itemid))
+            if (!IsSingleProjectItemSelection(out var hierarchy, out var itemid))
                 return null;
 
-            ((IVsProject)hierarchy).GetMkDocument(itemid, out string clickedFolderFullPath);
+            ((IVsProject) hierarchy).GetMkDocument(itemid, out var clickedFolderFullPath);
 
-            return new DirectoryInfo(clickedFolderFullPath).Parent; ;
+            return new DirectoryInfo(clickedFolderFullPath).Parent;
         }
 
-        private bool IsRootFolderInArea(DirectoryInfo rootFolder)
+        private static bool IsRootFolderInArea(DirectoryInfo rootFolder)
         {
-            return rootFolder.Parent.Name == "Areas";
+            return rootFolder.Parent != null && rootFolder.Parent.Name == "Areas";
         }
     }
 
@@ -970,9 +993,9 @@ namespace JqGridCodeGenerator.ViewModel
 
     public class Column
     {
-        public string Name {get;set;}
-        public string Type {get;set;}
-        public bool IsNullable { get; set; } = false;
-        public bool IsPrimaryKey { get; set; } = false;
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool IsNullable { get; set; }
+        public bool IsPrimaryKey { get; set; }
     }
 }

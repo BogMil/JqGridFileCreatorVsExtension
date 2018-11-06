@@ -5,15 +5,13 @@ namespace JqGridCodeGenerator.Commands
 {
     class CustomCommand : ICommand
     {
-        Action<object> _executeMethod;
-        Func<object, bool> _canExecuteMethod;
+        private readonly Action<object> _executeMethod;
 
         public event EventHandler CanExecuteChanged;
 
-        public CustomCommand(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
+        public CustomCommand(Action<object> executeMethod)
         {
             _executeMethod = executeMethod;
-            _canExecuteMethod = canExecuteMethod;
         }
 
         public bool CanExecute(object parameter)

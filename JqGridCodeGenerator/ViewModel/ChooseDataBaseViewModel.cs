@@ -23,10 +23,8 @@ using Constants = EnvDTE.Constants;
 
 namespace JqGridCodeGenerator.ViewModel
 {
-    public class ChooseDataBaseViewModel : INotifyPropertyChanged
+    public class ChooseDataBaseViewModel : BaseViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public ICommand PopulateComboBoxWithDatabasesCommand { get; set; }
         public ICommand HandleCredentialsFormVisibilityCommand { get; set; }
         public ICommand HandleControllersComboBoxVisibilityCommand { get; set; }
@@ -36,24 +34,19 @@ namespace JqGridCodeGenerator.ViewModel
 
         public List<Column> Columns = new List<Column>();
 
-        private void OnPropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
         public List<string> AddedFolders;
 
         public ChooseDataBaseViewModel()
         {
-            PopulateComboBoxWithDatabasesCommand = new CustomCommand(Populate, CanExecuteCommand);
+            PopulateComboBoxWithDatabasesCommand = new CustomCommand(GetDatabaseNames);
             HandleCredentialsFormVisibilityCommand =
-                new CustomCommand(HandleCredentialsFormVisibility, CanExecuteCommand);
+                new CustomCommand(HandleCredentialsFormVisibility);
             HandleControllersComboBoxVisibilityCommand =
-                new CustomCommand(HandleControllersComboBoxVisibility, CanExecuteCommand);
+                new CustomCommand(HandleControllersComboBoxVisibility);
             HandleRepositoriesComboBoxVisibilityCommand =
-                new CustomCommand(HandleRepositoriesComboBoxVisibility, CanExecuteCommand);
-            PopulateComboBoxWithTables = new CustomCommand(PopulateWithTables, CanExecuteCommand);
-            CreateFilesCommand = new CustomCommand(CreateFiles, CanExecuteCommand);
+                new CustomCommand(HandleRepositoriesComboBoxVisibility);
+            PopulateComboBoxWithTables = new CustomCommand(PopulateWithTables);
+            CreateFilesCommand = new CustomCommand(CreateFiles);
 
             AddedFolders = new List<string>();
             GetControllers();
@@ -79,19 +72,17 @@ namespace JqGridCodeGenerator.ViewModel
         private string _baseRepositoryNamespace;
 
         private CollectionView _databaseEntries;
-
         public CollectionView DatabaseEntries
         {
             get => _databaseEntries;
             set
             {
                 _databaseEntries = value;
-                OnPropertyChanged("DatabaseEntries");
+                OnPropertyChanged();
             }
         }
 
         private string _databaseEntry;
-
         public string DatabaseEntry
         {
             get => _databaseEntry;
@@ -99,25 +90,23 @@ namespace JqGridCodeGenerator.ViewModel
             {
                 if (_databaseEntry == value) return;
                 _databaseEntry = value;
-                OnPropertyChanged("DatabaseEntry");
+                OnPropertyChanged();
                 PopulateComboBoxWithTables.Execute(null);
             }
         }
 
         private CollectionView _tables;
-
         public CollectionView Tables
         {
             get => _tables;
             set
             {
                 _tables = value;
-                OnPropertyChanged("Tables");
+                OnPropertyChanged();
             }
         }
 
         private string _table;
-
         public string Table
         {
             get => _table;
@@ -126,24 +115,22 @@ namespace JqGridCodeGenerator.ViewModel
                 if (_table == value) return;
                 _table = value;
                 GetColumns();
-                OnPropertyChanged("Table");
+                OnPropertyChanged();
             }
         }
 
         private CollectionView _baseControllers;
-
         public CollectionView BaseControllers
         {
             get => _baseControllers;
             set
             {
                 _baseControllers = value;
-                OnPropertyChanged("BaseControllers");
+                OnPropertyChanged();
             }
         }
 
         private string _baseController;
-
         public string BaseController
         {
             get => _baseController;
@@ -152,24 +139,22 @@ namespace JqGridCodeGenerator.ViewModel
                 if (_baseController == value) return;
                 _baseController = value;
                 _baseControllerNamespace = _controllersWithNamespaces.GetNamespaceForType(value);
-                OnPropertyChanged("BaseController");
+                OnPropertyChanged();
             }
         }
 
         private CollectionView _baseRepositories;
-
         public CollectionView BaseRepositories
         {
             get => _baseRepositories;
             set
             {
                 _baseRepositories = value;
-                OnPropertyChanged("BaseRepositories");
+                OnPropertyChanged();
             }
         }
 
         private string _baseRepository;
-
         public string BaseRepository
         {
             get => _baseRepository;
@@ -178,12 +163,11 @@ namespace JqGridCodeGenerator.ViewModel
                 if (_baseRepository == value) return;
                 _baseRepository = value;
                 _baseRepositoryNamespace = _repositoriesWithNamespaces.GetNamespaceForType(value);
-                OnPropertyChanged("BaseRepository");
+                OnPropertyChanged();
             }
         }
 
-        private string _sqlServerName = "Enter Sql Server Name";
-
+        private string _sqlServerName = "Sql_Server";
         public string SqlServerName
         {
             get => _sqlServerName;
@@ -192,28 +176,24 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _sqlServerName)
                 {
                     _sqlServerName = value;
-                    OnPropertyChanged("SqlServerName");
+                    OnPropertyChanged();
                 }
             }
         }
 
-        private string _username = "Enter username";
-
+        private string _username = "Username";
         public string Username
         {
             get => _username;
             set
             {
-                if (value != _username)
-                {
-                    _username = value;
-                    OnPropertyChanged("Username");
-                }
+                if (value == _username) return;
+                _username = value;
+                OnPropertyChanged();
             }
         }
 
-        private string _password = "Enter password";
-
+        private string _password = "Password";
         public string Password
         {
             get => _password;
@@ -222,13 +202,12 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _password)
                 {
                     _password = value;
-                    OnPropertyChanged("Password");
+                    OnPropertyChanged();
                 }
             }
         }
 
         private string _baseName = "BaseName";
-
         public string BaseName
         {
             get => _baseName;
@@ -237,13 +216,12 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _baseName)
                 {
                     _baseName = value;
-                    OnPropertyChanged("BaseName");
+                    OnPropertyChanged();
                 }
             }
         }
 
         private bool _useWindowsIdentity;
-
         public bool UseWindowsIdentity
         {
             get => _useWindowsIdentity;
@@ -252,14 +230,13 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _useWindowsIdentity)
                 {
                     _useWindowsIdentity = value;
-                    OnPropertyChanged("UseWindowsIdentity");
+                    OnPropertyChanged();
                     HandleCredentialsFormVisibilityCommand.Execute(null);
                 }
             }
         }
 
         private bool _useBaseController;
-
         public bool UseBaseController
         {
             get => _useBaseController;
@@ -268,14 +245,13 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _useBaseController)
                 {
                     _useBaseController = value;
-                    OnPropertyChanged("UseBaseController");
+                    OnPropertyChanged();
                     HandleControllersComboBoxVisibilityCommand.Execute(null);
                 }
             }
         }
 
         private bool _isUseBaseControllerEnabled;
-
         public bool IsUseBaseControllerEnabled
         {
             get => _isUseBaseControllerEnabled;
@@ -284,13 +260,12 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _isUseBaseControllerEnabled)
                 {
                     _isUseBaseControllerEnabled = value;
-                    OnPropertyChanged("IsUseBaseControllerEnabled");
+                    OnPropertyChanged();
                 }
             }
         }
 
         private bool _isUseBaseRepositoryEnabled;
-
         public bool IsUseBaseRepositoryEnabled
         {
             get => _isUseBaseRepositoryEnabled;
@@ -299,33 +274,25 @@ namespace JqGridCodeGenerator.ViewModel
                 if (value != _isUseBaseRepositoryEnabled)
                 {
                     _isUseBaseRepositoryEnabled = value;
-                    OnPropertyChanged("IsUseBaseRepositoryEnabled");
+                    OnPropertyChanged();
                 }
             }
         }
 
         private bool _useBaseRepository;
-
         public bool UseBaseRepository
         {
             get => _useBaseRepository;
             set
             {
-                if (value != _useBaseRepository)
-                {
-                    _useBaseRepository = value;
-                    OnPropertyChanged("UseBaseService");
-                    HandleRepositoriesComboBoxVisibilityCommand.Execute(null);
-                }
+                if (value == _useBaseRepository) return;
+                _useBaseRepository = value;
+                OnPropertyChanged();
+                HandleRepositoriesComboBoxVisibilityCommand.Execute(null);
             }
         }
 
-        public bool CanExecuteCommand(object parameter)
-        {
-            return true;
-        }
-
-        public void Populate(object parameter)
+        public void GetDatabaseNames(object parameter)
         {
             var list = new List<ComboBoxItem>();
 
@@ -337,7 +304,8 @@ namespace JqGridCodeGenerator.ViewModel
                 {
                     using (IDataReader dr = cmd.ExecuteReader())
                     {
-                        while (dr.Read()) list.Add(new ComboBoxItem(dr[0].ToString()));
+                        while (dr.Read())
+                            list.Add(new ComboBoxItem(dr[0].ToString()));
                         DatabaseEntries = new CollectionView(list);
                     }
                 }
